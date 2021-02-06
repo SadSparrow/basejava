@@ -8,12 +8,14 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[10000];
+    private Resume[] storage = new Resume[10_000];
     private int size = 0;
 
-    public void update(Resume r) {
-        if (checkPresent(r.getUuid())) {
-            new Resume().setUuid(r.getUuid());
+    public void update(Resume resume) {
+        if (searchIndex(resume.getUuid()) != -1) {
+            storage[searchIndex(resume.getUuid())] = resume;
+        } else {
+            System.out.println("❌❌❌ UPDATE ERROR: no such resume (" + resume.getUuid() + ") in ArrayStorage ❌❌❌");
         }
     }
 
@@ -22,30 +24,34 @@ public class ArrayStorage {
         size = 0;
     }
 
-    public void save(Resume r) {
-        if (size > storage.length){
+    public void save(Resume resume) {
+        if (size > storage.length) {
             System.out.println("ArrayStorage is already full");
-        } else if (searchIndex(r.getUuid()) == -1) {
-            storage[size] = r;
+        } else if (searchIndex(resume.getUuid()) == -1) {
+            storage[size] = resume;
             size++;
         } else {
-            System.out.println("❌❌❌ ERROR: such resume already exist ❌❌❌");
+            System.out.println("❌❌❌ SAVE ERROR: such resume (" + resume.getUuid() + ") already exist ❌❌❌");
         }
     }
 
     public Resume get(String uuid) {
-        Resume r = null;
-        if (checkPresent(uuid)) {
-            r = storage[searchIndex(uuid)];
+        Resume resume = null;
+        if (searchIndex(uuid) != -1) {
+            resume = storage[searchIndex(uuid)];
+        } else {
+            System.out.println("❌❌❌ GET ERROR: no such resume (" + uuid + ") in ArrayStorage ❌❌❌");
         }
-        return r;
+        return resume;
     }
 
     public void delete(String uuid) {
-        if (checkPresent(uuid)) {
+        if (searchIndex(uuid) != -1) {
             storage[searchIndex(uuid)] = storage[size - 1];
             storage[size - 1] = null;
             size--;
+        } else {
+            System.out.println("❌❌❌ DELETE ERROR: no such resume (" + uuid + ") in ArrayStorage ❌❌❌");
         }
     }
 
@@ -58,14 +64,6 @@ public class ArrayStorage {
 
     public int size() {
         return size;
-    }
-
-    private boolean checkPresent(String uuid) {
-        if (searchIndex(uuid) == -1) {
-            System.out.println("❌❌❌ ERROR: no such resume in ArrayStorage ❌❌❌");
-            return false;
-        }
-        return true;
     }
 
     private int searchIndex(String uuid) {
