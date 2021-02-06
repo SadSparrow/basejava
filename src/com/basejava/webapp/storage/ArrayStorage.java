@@ -12,8 +12,9 @@ public class ArrayStorage {
     private int size = 0;
 
     public void update(Resume resume) {
-        if (searchIndex(resume.getUuid()) != -1) {
-            storage[searchIndex(resume.getUuid())] = resume;
+        int index = searchIndex(resume.getUuid());
+        if (index != -1) {
+            storage[index] = resume;
         } else {
             System.out.println("❌❌❌ UPDATE ERROR: no such resume (" + resume.getUuid() + ") in ArrayStorage ❌❌❌");
         }
@@ -37,8 +38,9 @@ public class ArrayStorage {
 
     public Resume get(String uuid) {
         Resume resume = null;
-        if (searchIndex(uuid) != -1) {
-            resume = storage[searchIndex(uuid)];
+        int index = searchIndex(uuid);
+        if (index != -1) {
+            resume = storage[index];
         } else {
             System.out.println("❌❌❌ GET ERROR: no such resume (" + uuid + ") in ArrayStorage ❌❌❌");
         }
@@ -46,8 +48,9 @@ public class ArrayStorage {
     }
 
     public void delete(String uuid) {
-        if (searchIndex(uuid) != -1) {
-            storage[searchIndex(uuid)] = storage[size - 1];
+        int index = searchIndex(uuid);
+        if (index != -1) {
+            storage[index] = storage[size - 1];
             storage[size - 1] = null;
             size--;
         } else {
