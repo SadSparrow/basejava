@@ -12,6 +12,7 @@ public class MainSortedArrayStorage {
             r.setUuid("uuid" + i);
             SORTED_ARRAY_STORAGE.save(r);
         }
+        printAll();
 
         Resume r1 = new Resume();
         r1.setUuid("uuid1");
@@ -41,6 +42,8 @@ public class MainSortedArrayStorage {
         SORTED_ARRAY_STORAGE.clear();
         printAll();
         System.out.println("Size: " + SORTED_ARRAY_STORAGE.size());
+        System.out.println("Get dummy: " + SORTED_ARRAY_STORAGE.get("dummy"));
+        System.out.println("Get uuid1000: " + SORTED_ARRAY_STORAGE.get("uuid1000"));
 
     }
 
