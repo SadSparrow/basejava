@@ -7,7 +7,7 @@ public class MainSortedArrayStorage {
     static final SortedArrayStorage SORTED_ARRAY_STORAGE = new SortedArrayStorage();
 
     public static void main(String[] args) {
-        for (int i = 1; i < 10; i += 3) {
+        for (int i = 1; i < 20; i +=2) {
             Resume r = new Resume();
             r.setUuid("uuid" + i);
             SORTED_ARRAY_STORAGE.save(r);
@@ -33,9 +33,9 @@ public class MainSortedArrayStorage {
         System.out.println("Get r2: " + SORTED_ARRAY_STORAGE.get(r2.getUuid()));
         printAll();
         System.out.println("Size: " + SORTED_ARRAY_STORAGE.size());
-
         SORTED_ARRAY_STORAGE.delete("uuid1");
-        SORTED_ARRAY_STORAGE.delete("uuid2");
+        SORTED_ARRAY_STORAGE.delete("uuid19");
+        SORTED_ARRAY_STORAGE.delete("uuid11");
         printAll();
         System.out.println("Size: " + SORTED_ARRAY_STORAGE.size());
 

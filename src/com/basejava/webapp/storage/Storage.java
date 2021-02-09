@@ -8,11 +8,11 @@ public interface Storage {
 
     void update(Resume r);
 
-    void save(Resume r); //
+    void save(Resume r);
 
     Resume get(String uuid);
 
-    void delete(String uuid); //
+    void delete(String uuid);
 
     Resume[] getAll();
 
