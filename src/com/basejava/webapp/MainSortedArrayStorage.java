@@ -8,20 +8,15 @@ public class MainSortedArrayStorage {
 
     public static void main(String[] args) {
         for (int i = 1; i < 20; i +=2) {
-            Resume r = new Resume();
-            r.setUuid("uuid" + i);
+            Resume r = new Resume("uuid" + i);
             SORTED_ARRAY_STORAGE.save(r);
         }
         printAll();
 
-        Resume r1 = new Resume();
-        r1.setUuid("uuid1");
-        Resume r2 = new Resume();
-        r2.setUuid("uuid2");
-        Resume r3 = new Resume();
-        r3.setUuid("uuid3");
-        Resume r5 = new Resume();
-        r5.setUuid("uuid5");
+        Resume r1 = new Resume("uuid1");
+        Resume r2 = new Resume("uuid2");
+        Resume r3 = new Resume("uuid3");
+        Resume r5 = new Resume("uuid5");
 
         SORTED_ARRAY_STORAGE.update(r1);
         SORTED_ARRAY_STORAGE.save(r5);
