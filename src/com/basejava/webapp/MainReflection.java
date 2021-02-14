@@ -1,7 +1,6 @@
 package com.basejava.webapp;
 
 import com.basejava.webapp.model.Resume;
-import com.basejava.webapp.storage.AbstractArrayStorage;
 import com.basejava.webapp.storage.SortedArrayStorage;
 
 import java.lang.reflect.Field;
@@ -20,16 +19,14 @@ public class MainReflection {
         // TODO : invoke r.toString via reflection
         System.out.println(Resume.class.getMethod("toString").invoke(r));
 
-        //IllegalAccessException: class com.basejava.webapp.MainReflection cannot access a member of class com.basejava.webapp.storage.AbstractArrayStorage with modifiers "protected static final"
-        Field f = AbstractArrayStorage.class.getDeclaredField("STORAGE_LIMIT");
-        f.setAccessible(true);
-        Object value = f.get(AbstractArrayStorage.class);
-        System.out.println(AbstractArrayStorage.class.getDeclaredField("STORAGE_LIMIT").get(new SortedArrayStorage()));
-
-        //Чтобы получить значение поля, нужно сначала получить для этого поля объект типа Field затем
-        // использовать метод get(). Метод принимает входным параметром ссылку на объект класса.
-        //Class c = obj.getClass();
-        //Field field = c.getField("name");
-        //String nameValue = (String) field.get(obj)
+        //for fun
+        SortedArrayStorage s = new SortedArrayStorage();
+        Class victimClass = s.getClass().getSuperclass();
+        Field[] fields = victimClass.getDeclaredFields();
+        for (Field f : fields) {
+            System.out.println(f.getName() + ", " + f.getType());
+        }
+        fields[0].setAccessible(true); //fields[0].trySetAccessible();
+        System.out.println(fields[0].getInt(s));
     }
 }
