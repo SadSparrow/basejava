@@ -65,7 +65,7 @@ public abstract class AbstractStorageTest {
     }
 
     @Test(expected = NotExistStorageException.class)
-    public void getNotExist() {
+    public void getWrong() {
         storage.get(UUID_5);
     }
 

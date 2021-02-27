@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage {
-    protected List<Resume> storage = new ArrayList<>();
+    private final List<Resume> storage = new ArrayList<>();
 
     @Override
     public void clear() {
@@ -16,11 +16,6 @@ public class ListStorage extends AbstractStorage {
     @Override
     protected void update(int index, Resume resume) {
         storage.set(index, resume);
-    }
-
-    @Override
-    protected void checkOverflow(Resume resume) {
-        //false
     }
 
     @Override
