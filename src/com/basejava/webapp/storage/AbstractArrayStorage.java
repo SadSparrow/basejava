@@ -27,21 +27,20 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected void save(int index, Resume resume) {
         if (size >= STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", resume.getUuid());
-        } else {
-            saveElement(index, resume);
-            size++;
         }
+        saveElement(index, resume);
+        size++;
     }
 
     protected abstract void saveElement(int index, Resume resume);
 
     @Override
-    protected Resume getResume(int index) {
+    protected Resume getResume(int index, String uuid) {
         return storage[index];
     }
 
     @Override
-    protected void delete(int index) {
+    protected void delete(int index, String uuid) {
         deleteResume(index);
         storage[size - 1] = null;
         size--;
