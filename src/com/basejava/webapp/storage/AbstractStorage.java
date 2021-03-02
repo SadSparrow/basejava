@@ -8,49 +8,47 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index < 0) {
+        if (elementExist(resume.getUuid())) {
+            doUpdate(resume);
+            System.out.println("update (" + resume.getUuid() + ") successfully");
+        } else {
             throw new NotExistStorageException("UPDATE", resume.getUuid());
         }
-        update(index, resume);
-        System.out.println("update (" + resume.getUuid() + ") successfully");
     }
 
-    protected abstract void update(int index, Resume resume);
+    protected abstract void doUpdate(Resume resume);
 
     @Override
     public void save(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index <= 0) {
-            save(index, resume);
+        if (!elementExist(resume.getUuid())) {
+            doSave(resume);
         } else {
             throw new ExistStorageException("SAVE", resume.getUuid());
         }
     }
 
-    protected abstract void save(int index, Resume resume);
+    protected abstract void doSave(Resume resume);
 
     @Override
     public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
+        if (!elementExist(uuid)) {
             throw new NotExistStorageException("GET", uuid);
         }
-        return getResume(index, uuid);
+        return getResume(uuid);
     }
 
-    protected abstract Resume getResume(int index, String uuid);
+    protected abstract Resume getResume(Object key);
 
     @Override
     public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
+        if (elementExist(uuid)) {
+            doDelete(uuid);
+        } else {
             throw new NotExistStorageException("DELETE", uuid);
         }
-        delete(index, uuid);
     }
 
-    protected abstract void delete(int index, String uuid);
+    protected abstract void doDelete(Object key);
 
-    protected abstract int getIndex(String uuid);
+    protected abstract boolean elementExist(Object key);
 }
