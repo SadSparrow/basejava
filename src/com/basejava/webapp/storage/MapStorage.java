@@ -14,12 +14,12 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Resume resume) {
+    protected void doUpdate(Resume resume, Object key) {
         storage.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected void doSave(Resume resume) {
+    protected void doSave(Resume resume, Object key) {
         storage.put(resume.getUuid(), resume);
     }
 
@@ -46,5 +46,10 @@ public class MapStorage extends AbstractStorage {
     @Override
     protected boolean elementExist(Object key) {
         return storage.containsKey(key);
+    }
+
+    @Override
+    protected Object getSearchKey(String uuid) {
+        return uuid;
     }
 }

@@ -8,47 +8,54 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        if (elementExist(resume.getUuid())) {
-            doUpdate(resume);
-            System.out.println("update (" + resume.getUuid() + ") successfully");
-        } else {
-            throw new NotExistStorageException("UPDATE", resume.getUuid());
-        }
+        Object key = existKey("UPDATE", resume.getUuid());
+        doUpdate(resume, key);
+        System.out.println("update (" + resume.getUuid() + ") successfully");
     }
 
-    protected abstract void doUpdate(Resume resume);
+    protected abstract void doUpdate(Resume resume, Object key);
 
     @Override
     public void save(Resume resume) {
-        if (!elementExist(resume.getUuid())) {
-            doSave(resume);
-        } else {
-            throw new ExistStorageException("SAVE", resume.getUuid());
-        }
+        Object key = notExistKey(resume.getUuid());
+        doSave(resume, key);
     }
 
-    protected abstract void doSave(Resume resume);
+    protected abstract void doSave(Resume resume, Object key);
 
     @Override
     public Resume get(String uuid) {
-        if (!elementExist(uuid)) {
-            throw new NotExistStorageException("GET", uuid);
-        }
-        return getResume(uuid);
+        Object key = existKey("GET", uuid);
+        return getResume(key);
     }
 
     protected abstract Resume getResume(Object key);
 
     @Override
     public void delete(String uuid) {
-        if (elementExist(uuid)) {
-            doDelete(uuid);
-        } else {
-            throw new NotExistStorageException("DELETE", uuid);
-        }
+        Object key = existKey("DELETE", uuid);
+        doDelete(key);
     }
 
     protected abstract void doDelete(Object key);
 
     protected abstract boolean elementExist(Object key);
+
+    protected abstract Object getSearchKey(String uuid);
+
+    private Object notExistKey(String uuid) {
+        Object key = getSearchKey(uuid);
+        if (elementExist(uuid)) {
+            throw new ExistStorageException("SAVE", uuid);
+        }
+        return key;
+    }
+
+    private Object existKey(String methodName, String uuid) {
+        Object key = getSearchKey(uuid);
+        if (!elementExist(uuid)) {
+            throw new NotExistStorageException(methodName, uuid);
+        }
+        return key;
+    }
 }
