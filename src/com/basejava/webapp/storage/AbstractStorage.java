@@ -8,7 +8,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        Object key = existKey("UPDATE", resume.getUuid());
+        Object key = getKeyIfElementExist("UPDATE", resume.getUuid());
         doUpdate(resume, key);
         System.out.println("update (" + resume.getUuid() + ") successfully");
     }
@@ -17,7 +17,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-        Object key = notExistKey(resume.getUuid());
+        Object key = getKeyIfElementNotExist(resume.getUuid());
         doSave(resume, key);
     }
 
@@ -25,7 +25,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        Object key = existKey("GET", uuid);
+        Object key = getKeyIfElementExist("GET", uuid);
         return getResume(key);
     }
 
@@ -33,7 +33,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        Object key = existKey("DELETE", uuid);
+        Object key = getKeyIfElementExist("DELETE", uuid);
         doDelete(key);
     }
 
@@ -43,17 +43,17 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract Object getSearchKey(String uuid);
 
-    private Object notExistKey(String uuid) {
+    private Object getKeyIfElementNotExist(String uuid) {
         Object key = getSearchKey(uuid);
-        if (elementExist(uuid)) {
+        if (elementExist(key)) {
             throw new ExistStorageException("SAVE", uuid);
         }
         return key;
     }
 
-    private Object existKey(String methodName, String uuid) {
+    private Object getKeyIfElementExist(String methodName, String uuid) {
         Object key = getSearchKey(uuid);
-        if (!elementExist(uuid)) {
+        if (!elementExist(key)) {
             throw new NotExistStorageException(methodName, uuid);
         }
         return key;

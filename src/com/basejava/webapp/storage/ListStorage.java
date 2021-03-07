@@ -55,11 +55,6 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     protected boolean elementExist(Object key) {
-        for (Resume resume : storage) {
-            if (resume.getUuid().equals(key)) {
-                return true;
-            }
-        }
-        return false;
+        return (Integer) key >= 0;
     }
 }
