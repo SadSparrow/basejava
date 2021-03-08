@@ -3,7 +3,9 @@ package com.basejava.webapp.storage;
 import com.basejava.webapp.exception.StorageException;
 import com.basejava.webapp.model.Resume;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10_000;
@@ -48,8 +50,11 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void deleteResume(int index);
 
     @Override
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
+    public List<Resume> getAllSorted() {
+        //return Arrays.copyOf(storage, size);
+        List<Resume> list = new ArrayList<>(Arrays.asList(Arrays.copyOf(storage, size)));
+        list.sort(Resume::compareTo);
+        return list;
     }
 
     @Override
@@ -57,7 +62,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    protected abstract Object getSearchKey(String uuid);
+    protected abstract Integer getSearchKey(String uuid); //ковариация - какая польза в данном случае?
 
     @Override
     protected boolean elementExist(Object key) {
