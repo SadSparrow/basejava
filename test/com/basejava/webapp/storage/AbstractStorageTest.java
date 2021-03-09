@@ -25,10 +25,10 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() {
         storage.clear();
-        storage.save(new Resume(UUID_1, "C")); //null
-        storage.save(new Resume(UUID_2, "B")); //null
-        storage.save(new Resume(UUID_3, "B")); //null
-        storage.save(new Resume(UUID_4, "A")); //null
+        storage.save(new Resume(UUID_1, "C"));
+        storage.save(new Resume(UUID_2, "Bb"));
+        storage.save(new Resume(UUID_3, "Ba"));
+        storage.save(new Resume(UUID_4, "A"));
     }
 
     @Test
@@ -39,26 +39,26 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume r = new Resume(UUID_4, null); //null
+        Resume r = new Resume(UUID_4, "new A");
         storage.update(r);
     }
 
     @Test(expected = NotExistStorageException.class)
     public void updateWrong() {
-        Resume r = new Resume(UUID_5, null); //null
+        Resume r = new Resume(UUID_5, "Dd");
         storage.update(r);
     }
 
     @Test
     public void save() {
-        storage.save(new Resume(UUID_5, null)); //null
+        storage.save(new Resume(UUID_5, "Dd"));
         Assert.assertEquals(5, storage.size());
         storage.get(UUID_5);
     }
 
     @Test(expected = ExistStorageException.class)
     public void saveWrong() {
-        storage.save(new Resume(UUID_4, null)); //null
+        storage.save(new Resume(UUID_4, "A"));
     }
 
     @Test
@@ -89,11 +89,9 @@ public abstract class AbstractStorageTest {
         List<Resume> actualResumes = storage.getAllSorted();
         List<Resume> expectedResumes = Arrays.asList(
                 new Resume(UUID_4, "A"),
-                new Resume(UUID_2, "B"),
-                new Resume(UUID_3, "B"),
+                new Resume(UUID_3, "Ba"),
+                new Resume(UUID_2, "Bb"),
                 new Resume(UUID_1, "C"));
-        System.out.println(actualResumes);
-        System.out.println(expectedResumes);
         Assert.assertEquals(expectedResumes, actualResumes);
     }
 
