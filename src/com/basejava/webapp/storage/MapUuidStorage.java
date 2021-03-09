@@ -4,7 +4,6 @@ import com.basejava.webapp.model.Resume;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MapUuidStorage extends AbstractStorage {
@@ -36,11 +35,8 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        // return new LinkedHashMap<>(storage).values().toArray(new Resume[0]);
-        List<Resume> list = new ArrayList<>(storage.values());
-        list.sort(Resume::compareTo);
-        return list;
+    public ArrayList<Resume> getList() {
+        return new ArrayList<>(storage.values());
     }
 
     @Override

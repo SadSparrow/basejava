@@ -5,7 +5,6 @@ import com.basejava.webapp.model.Resume;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10_000;
@@ -50,11 +49,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void deleteResume(int index);
 
     @Override
-    public List<Resume> getAllSorted() {
-        //return Arrays.copyOf(storage, size);
-        List<Resume> list = new ArrayList<>(Arrays.asList(Arrays.copyOf(storage, size)));
-        list.sort(Resume::compareTo);
-        return list;
+    public ArrayList<Resume> getList() {
+        return new ArrayList<>(Arrays.asList(Arrays.copyOf(storage, size)));
     }
 
     @Override

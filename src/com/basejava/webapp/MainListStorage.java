@@ -7,10 +7,10 @@ public class MainListStorage {
     static final ListStorage LIST_STORAGE = new ListStorage();
 
     public static void main(String[] args) {
-        Resume r1 = new Resume("uuid1");
-        Resume r2 = new Resume("uuid2");
-        Resume r3 = new Resume("uuid3");
-        Resume r5 = new Resume("uuid5");
+        Resume r1 = new Resume("uuid1", "Cat Tom");
+        Resume r2 = new Resume("uuid2", "Mouse Jerry");
+        Resume r3 = new Resume("uuid3", "Cat Meow");
+        Resume r5 = new Resume("uuid5", "Dog dog");
         // LIST_STORAGE.update(r1);
         LIST_STORAGE.save(r5);
         LIST_STORAGE.save(r3);
@@ -35,7 +35,7 @@ public class MainListStorage {
 
     static void printAll() {
         System.out.println("\nGet All");
-        for (Resume r : LIST_STORAGE.getAll()) {
+        for (Resume r : LIST_STORAGE.getAllSorted()) {
             System.out.println(r);
         }
     }

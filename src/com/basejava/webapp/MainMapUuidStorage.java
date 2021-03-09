@@ -1,16 +1,16 @@
 package com.basejava.webapp;
 
 import com.basejava.webapp.model.Resume;
-import com.basejava.webapp.storage.MapStorage;
+import com.basejava.webapp.storage.MapUuidStorage;
 
-public class MainMapStorage {
-    static final MapStorage MAP_STORAGE = new MapStorage();
+public class MainMapUuidStorage {
+    static final MapUuidStorage MAP_STORAGE = new MapUuidStorage();
 
     public static void main(String[] args) {
-        Resume r1 = new Resume("uuid1");
-        Resume r2 = new Resume("uuid2");
-        Resume r3 = new Resume("uuid3");
-        Resume r5 = new Resume("uuid5");
+        Resume r1 = new Resume("uuid1", "Cat Tom");
+        Resume r2 = new Resume("uuid2", "Mouse Jerry");
+        Resume r3 = new Resume("uuid3", "Cat Meow");
+        Resume r5 = new Resume("uuid5", "Dog dog");
         // MAP_STORAGE.update(r1);
         MAP_STORAGE.save(r5);
         MAP_STORAGE.save(r3);
@@ -34,7 +34,7 @@ public class MainMapStorage {
 
     static void printAll() {
         System.out.println("\nGet All");
-        for (Resume r : MAP_STORAGE.getAll()) {
+        for (Resume r : MAP_STORAGE.getAllSorted()) {
             System.out.println(r);
         }
     }
