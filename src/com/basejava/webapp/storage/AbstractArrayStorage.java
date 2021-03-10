@@ -58,10 +58,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    protected abstract Integer getSearchKey(String uuid); //ковариация - какая польза в данном случае?
+    protected abstract Integer getSearchKey(String uuid); //ковариация
 
     @Override
-    protected boolean elementExist(Object key) {
+    protected boolean isResumeExist(Object key) {
         return (Integer) key >= 0;
     }
 }

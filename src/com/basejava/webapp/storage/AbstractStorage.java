@@ -42,13 +42,13 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void doDelete(Object key);
 
-    protected abstract boolean elementExist(Object key);
+    protected abstract boolean isResumeExist(Object key);
 
     protected abstract Object getSearchKey(String uuid);
 
     private Object getKeyIfElementNotExist(String uuid) {
         Object key = getSearchKey(uuid);
-        if (elementExist(key)) {
+        if (isResumeExist(key)) {
             throw new ExistStorageException("SAVE", uuid);
         }
         return key;
@@ -56,7 +56,7 @@ public abstract class AbstractStorage implements Storage {
 
     private Object getKeyIfElementExist(String methodName, String uuid) {
         Object key = getSearchKey(uuid);
-        if (!elementExist(key)) {
+        if (!isResumeExist(key)) {
             throw new NotExistStorageException(methodName, uuid);
         }
         return key;
