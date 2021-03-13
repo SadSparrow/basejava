@@ -16,12 +16,12 @@ public class MapUuidStorage extends AbstractStorage {
 
     @Override
     protected void doUpdate(Resume resume, Object key) {
-        storage.put(resume.getUuid(), resume);
+        storage.put((String) key, resume);
     }
 
     @Override
     protected void doSave(Resume resume, Object key) {
-        storage.put(resume.getUuid(), resume);
+        storage.put((String) key, resume);
     }
 
     @Override

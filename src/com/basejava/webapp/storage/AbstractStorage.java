@@ -4,7 +4,6 @@ import com.basejava.webapp.exception.ExistStorageException;
 import com.basejava.webapp.exception.NotExistStorageException;
 import com.basejava.webapp.model.Resume;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractStorage implements Storage {
@@ -69,5 +68,5 @@ public abstract class AbstractStorage implements Storage {
         return list;
     }
 
-    protected abstract ArrayList<Resume> getList();
+    protected abstract List<Resume> getList();
 }

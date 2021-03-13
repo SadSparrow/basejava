@@ -5,7 +5,6 @@ import com.basejava.webapp.model.Resume;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class MapResumeStorage extends AbstractStorage{
     private final Map<String, Resume> storage = new LinkedHashMap<>();
@@ -27,12 +26,12 @@ public class MapResumeStorage extends AbstractStorage{
 
     @Override
     protected Resume getResume(Object key) {
-        return storage.get(getMapKey(key));
+        return (Resume) key;
     }
 
     @Override
     protected void doDelete(Object key) {
-        storage.remove(getMapKey(key));
+        storage.remove(((Resume) key).getUuid());
     }
 
     @Override
@@ -47,22 +46,11 @@ public class MapResumeStorage extends AbstractStorage{
 
     @Override
     protected boolean isResumeExist(Object key) {
-        return storage.containsValue(key);
+        return key != null;
     }
 
     @Override
     protected Object getSearchKey(String uuid) {
         return storage.get(uuid);
-    }
-
-    private String getMapKey(Object key) {
-        Set<Map.Entry<String,Resume>> entrySet = storage.entrySet();
-        String mapKey = null;
-        for (Map.Entry<String,Resume> pair : entrySet) {
-            if (key.equals(pair.getValue())) {
-                mapKey = pair.getKey();
-            }
-        }
-        return mapKey;
     }
 }
