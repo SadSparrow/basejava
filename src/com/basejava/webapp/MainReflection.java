@@ -27,6 +27,5 @@ public class MainReflection {
             System.out.println(f.getName() + ", " + f.getType());
         }
         fields[0].setAccessible(true); //fields[0].trySetAccessible();
-        System.out.println(fields[0].getInt(s));
     }
 }
