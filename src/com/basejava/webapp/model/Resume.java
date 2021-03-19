@@ -1,6 +1,7 @@
 package com.basejava.webapp.model;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Objects;
 
 import static com.basejava.webapp.model.ContactType.*;
@@ -38,8 +39,8 @@ public class Resume implements Comparable<Resume> {
         };
         this.content = new EnumMap<>(SectionType.class) {
             {
-                put(PERSONAL, new ContentSimpleText());
                 put(OBJECTIVE, new ContentSimpleText());
+                put(PERSONAL, new ContentSimpleText());
                 put(ACHIEVEMENT, new ContentStringList());
                 put(QUALIFICATIONS, new ContentStringList());
                 put(EXPERIENCE, new ContentDateIntervalText());
@@ -59,6 +60,10 @@ public class Resume implements Comparable<Resume> {
 
     public String getUuid() {
         return uuid;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 
     public EnumMap<ContactType, String> getContacts() {
@@ -97,6 +102,47 @@ public class Resume implements Comparable<Resume> {
 
     public EnumMap<SectionType, Content> getContent() {
         return content;
+    }
+
+    public String getObjective() {
+        return content.get(OBJECTIVE).toString();
+    }
+
+    public void setObjective(String text) {
+        content.replace(OBJECTIVE, new ContentSimpleText(text));
+    }
+
+    public String getPersonal() {
+        return content.get(PERSONAL).toString();
+    }
+
+    public void setPersonal(String text) {
+        content.replace(PERSONAL, new ContentSimpleText(text));
+    }
+
+    public String getAchievment() {
+        return content.get(ACHIEVEMENT).toString();
+    }
+
+    public void setAchievement(List<String> stringList) {
+        content.replace(ACHIEVEMENT, new ContentStringList(stringList));
+    }
+
+    public String getQualifications() {
+        return content.get(QUALIFICATIONS).toString();
+    }
+
+    public void setQualifications(List<String> stringList) {
+        content.replace(QUALIFICATIONS, new ContentStringList(stringList));
+    }
+
+    //EXPERIENCE Experience
+    public String getExperience() {
+        return content.get(EXPERIENCE).toString();
+    }
+
+    public void setExperience(ContentDateIntervalText c) {
+        content.replace(EXPERIENCE, c);
     }
 
 

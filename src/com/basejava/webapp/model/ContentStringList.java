@@ -13,11 +13,12 @@ public class ContentStringList implements Content {
         this.stringList = stringList;
     }
 
-    public List<String> getStringList() {
-        return stringList;
-    }
-
-    public void setStringList(List<String> stringList) {
-        this.stringList = stringList;
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (String s : stringList) {
+            sb.append(s).append("\n");
+        }
+        return sb.toString();
     }
 }

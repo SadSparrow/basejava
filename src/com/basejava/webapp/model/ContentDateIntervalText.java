@@ -1,6 +1,8 @@
 package com.basejava.webapp.model;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +12,15 @@ public class ContentDateIntervalText implements Content {
     public ContentDateIntervalText() {
     }
 
-    public void addContentDatesText(String title, LocalDate d1, LocalDate d2, String text) {
+    public void addContentDatesText(String title, YearMonth d1, YearMonth d2, String text) {
         contentDateText.add(new ContentDateText(title, d1, d2, text));
     }
 
-    public void addContentDateTillPresentText(String title, LocalDate d1, String p, String text) {
+    public void addContentDatesText(String title, String d1, String d2, String text) {
+        contentDateText.add(new ContentDateText(title, d1, d2, text));
+    }
+
+    public void addContentDateTillPresentText(String title, YearMonth d1, String p, String text) {
         contentDateText.add(new ContentDateText(title, d1, p, text));
     }
 
@@ -33,23 +39,42 @@ public class ContentDateIntervalText implements Content {
 
     class ContentDateText {
         String title;
-        LocalDate date1;
-        LocalDate date2;
+        YearMonth date1;
+        YearMonth date2;
         String tillPresent;
         String text;
 
-        public ContentDateText(String title, LocalDate date1, LocalDate date2, String text) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+
+        private ContentDateText(String title, YearMonth date1, String text) {
             this.title = title;
             this.date1 = date1;
-            this.date2 = date2;
             this.text = text;
         }
 
-        public ContentDateText(String title, LocalDate date1, String tillPresent, String text) {
+        private ContentDateText(String title, String date1, String text) {
             this.title = title;
-            this.date1 = date1;
-            this.tillPresent = tillPresent;
+            this.date1 = YearMonth.parse(date1, formatter);
             this.text = text;
+        }
+
+        public ContentDateText(String title, YearMonth date1, YearMonth date2, String text) {
+            this(title, date1, text);
+            this.date2 = date2;
+        }
+
+        public ContentDateText(String title, String date1, String date2TillPresent, String text) {
+            this(title, date1, text);
+            try {
+                this.date2 = YearMonth.parse(date2TillPresent, formatter);
+            } catch (DateTimeParseException e) {
+                this.tillPresent = date2TillPresent;
+            }
+        }
+
+        public ContentDateText(String title, YearMonth date1, String tillPresent, String text) {
+            this(title, date1, text);
+            this.tillPresent = tillPresent;
         }
 
         public String getContentDate1Text() {
@@ -57,11 +82,11 @@ public class ContentDateIntervalText implements Content {
         }
 
         public String getContentDatesText() {
-            return title + "\n" + date1 + "\n" + date2 + "\n" + text;
+            return title + "\n" + date1.format(formatter) + " - " + date2.format(formatter) + "\n" + text;
         }
 
         public String getContentDateTillPresentText() {
-            return title + "\n" + date1 + "\n" + tillPresent + "\n" + text;
+            return title + "\n" + date1.format(formatter) + " - " + tillPresent + "\n" + text;
         }
     }
 }
