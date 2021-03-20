@@ -3,13 +3,13 @@ package com.basejava.webapp.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContentStringList implements Content {
+public class StringListContent implements Content {
     private List<String> stringList = new ArrayList<>();
 
-    public ContentStringList() {
+    public StringListContent() {
     }
 
-    public ContentStringList(List<String> stringList) {
+    public StringListContent(List<String> stringList) {
         this.stringList = stringList;
     }
 

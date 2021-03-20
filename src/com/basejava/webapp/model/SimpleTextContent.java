@@ -1,13 +1,13 @@
 package com.basejava.webapp.model;
 
-public class ContentSimpleText implements Content {
+public class SimpleTextContent implements Content {
     private String simpleText;
 
-    public ContentSimpleText() {
+    public SimpleTextContent() {
         simpleText = "simpleText - поле не заполнено";
     }
 
-    public ContentSimpleText(String simpleText) {
+    public SimpleTextContent(String simpleText) {
         this.simpleText = simpleText;
     }
 
@@ -15,7 +15,7 @@ public class ContentSimpleText implements Content {
         return simpleText;
     }
 
-    public void setSimpleText(String simpleText) {
+    public void SimpleTextContent(String simpleText) {
         this.simpleText = simpleText;
     }
 
