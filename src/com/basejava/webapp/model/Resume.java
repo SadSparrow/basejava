@@ -1,5 +1,6 @@
 package com.basejava.webapp.model;
 
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -9,8 +10,8 @@ import java.util.Objects;
 public class Resume implements Comparable<Resume> {
     private final String uuid;
     private final String fullName;
-    private Map<ContactType, String> contacts;
-    private Map<SectionType, Content> content;
+    private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
+    private final Map<SectionType, Content> content = new EnumMap<>(SectionType.class);
 
     public Resume(String uuid, String fullName) {
         Objects.requireNonNull(uuid, "uuid must not be null");
@@ -27,20 +28,20 @@ public class Resume implements Comparable<Resume> {
         return fullName;
     }
 
-    public Map<ContactType, String> getContacts() {
-        return contacts;
+    public void setContacts(ContactType type, String c) {
+        contacts.put(type, c);
     }
 
-    public void setContacts(Map<ContactType, String> contacts) {
-        this.contacts = contacts;
+    public String getContact(ContactType type) {
+        return contacts.get(type);
     }
 
-    public Map<SectionType, Content> getContent() {
-        return content;
+    public void setContent(SectionType type, Content c) {
+        content.put(type, c);
     }
 
-    public void setContent(Map<SectionType, Content> content) {
-        this.content = content;
+    public Content getContent(SectionType type) {
+        return content.get(type);
     }
 
     @Override

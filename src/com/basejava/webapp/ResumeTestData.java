@@ -2,25 +2,20 @@ package com.basejava.webapp;
 
 import com.basejava.webapp.model.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 public class ResumeTestData {
     public static void main(String[] args) {
         Resume r = new Resume("uuid1", "Григорий Кислин");
-        Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
-        Map<SectionType, Content> content = new EnumMap<>(SectionType.class);
-        r.setContacts(contacts);
-        r.setContent(content);
 
-        contacts.put(ContactType.PHONE, "+7(921) 855-0482");
-        contacts.put(ContactType.SKYPE, "grigory.kislin");
-        contacts.put(ContactType.MAIl, "gkislin@yandex.ru");
+        r.setContacts(ContactType.PHONE, "+7(921) 855-0482");
+        r.setContacts(ContactType.SKYPE, "grigory.kislin");
+        r.setContacts(ContactType.MAIl, "gkislin@yandex.ru");
 
-        content.put(SectionType.OBJECTIVE, new SimpleTextContent("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
-        content.put(SectionType.PERSONAL, new SimpleTextContent("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
+        r.setContent(SectionType.OBJECTIVE, new SimpleTextContent("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
+        r.setContent(SectionType.PERSONAL, new SimpleTextContent("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
 
         List<String> listAchievment = new ArrayList<>();
         listAchievment.add("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", \"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). Удаленное взаимодействие (JMS/AKKA)\". Организация онлайн стажировок и ведение проектов. Более 1000 выпускников.");
@@ -29,7 +24,7 @@ public class ResumeTestData {
         listAchievment.add("Реализация c нуля Rich Internet Application приложения на стеке технологий JPA, Spring, Spring-MVC, GWT, ExtGWT (GXT), Commet, HTML5, Highstock для алгоритмического трейдинга.");
         listAchievment.add("Создание JavaEE фреймворка для отказоустойчивого взаимодействия слабо-связанных сервисов (SOA-base архитектура, JAX-WS, JMS, AS Glassfish). Сбор статистики сервисов и информации о состоянии через систему мониторинга Nagios. Реализация онлайн клиента для администрирования и мониторинга системы по JMX (Jython/ Django).");
         listAchievment.add("Реализация протоколов по приему платежей всех основных платежных системы России (Cyberplat, Eport, Chronopay, Сбербанк), Белоруcсии(Erip, Osmp) и Никарагуа.");
-        content.put(SectionType.ACHIEVEMENT, new StringListContent(listAchievment));
+        r.setContent(SectionType.ACHIEVEMENT, new StringListContent(listAchievment));
 
         List<String> listQualifications = new ArrayList<>();
         listQualifications.add("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
@@ -47,31 +42,36 @@ public class ResumeTestData {
         listQualifications.add("администрирование Hudson/Jenkins, Ant + custom task, SoapUI, JPublisher, Flyway, Nagios, iReport, OpenCmis,");
         listQualifications.add("Отличное знание и опыт применения концепций ООП, SOA, шаблонов проектрирования, архитектурных шаблонов, UML, функционального программирования");
         listQualifications.add("Родной русский, английский \"upper intermediate\"");
-        content.put(SectionType.QUALIFICATIONS, new StringListContent(listQualifications));
+        r.setContent(SectionType.QUALIFICATIONS, new StringListContent(listQualifications));
 
-        Organization organizations = new Organization();
-        organizations.addDatesText("Java Online Projects", "10/2013", "Сейчас", "Автор проекта.\nСоздание, организация и проведение Java онлайн проектов и стажировок.");
-        organizations.addDatesText("Wrike", "10/2014", "01/2016", "Старший разработчик (backend)\nПроектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.");
-        organizations.addDatesText("RIT Center", "04/2012", "10/2014", "Java архитектор\nОрганизация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), конфигурирование системы (pgBoucer, Nginx), AAA via SSO. Архитектура БД и серверной части системы. Разработка интергационных сервисов: CMIS, BPMN2, 1C (WebServices), сервисов общего назначения (почта, экспорт в pdf, doc, html). Интеграция Alfresco JLAN для online редактирование из браузера документов MS Office. Maven + plugin development, Ant, Apache Commons, Spring security, Spring MVC, Tomcat,WSO2, xcmis, OpenCmis, Bonita, Python scripting, Unix shell remote scripting via ssh tunnels, PL/Python");
-        organizations.addDatesText("Luxoft (Deutsche Bank)", "12/2010", "04/2012", "Ведущий программист\nУчастие в проекте Deutsche Bank CRM (WebLogic, Hibernate, Spring, Spring MVC, SmartGWT, GWT, Jasper, Oracle). Реализация клиентской и серверной части CRM. Реализация RIA-приложения для администрирования, мониторинга и анализа результатов в области алгоритмического трейдинга. JPA, Spring, Spring-MVC, GWT, ExtGWT (GXT), Highstock, Commet, HTML5.");
-        organizations.addDatesText("Yota", "06/2008", "12/2010", "Ведущий специалист\nДизайн и имплементация Java EE фреймворка для отдела \"Платежные Системы\" (GlassFish v2.1, v3, OC4J, EJB3, JAX-WS RI 2.1, Servlet 2.4, JSP, JMX, JMS, Maven2). Реализация администрирования, статистики и мониторинга фреймворка. Разработка online JMX клиента (Python/ Jython, Django, ExtJS)");
-        organizations.addDatesText("Enkata", "03/2007", "06/2008", "Разработчик ПО\nРеализация клиентской (Eclipse RCP) и серверной (JBoss 4.2, Hibernate 3.0, Tomcat, JMS) частей кластерного J2EE приложения (OLAP, Data mining).");
-        organizations.addDatesText("Siemens AG", "01/2005", "02/2007", "Разработчик ПО\nРазработка информационной модели, проектирование интерфейсов, реализация и отладка ПО на мобильной IN платформе Siemens @vantage (Java, Unix).");
-        organizations.addDatesText("Alcatel", "09/1997", "01/2005", "Инженер по аппаратному и программному тестированию\nТестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM).");
-        content.put(SectionType.EXPERIENCE, organizations);
+        List<Organization> organizations = new ArrayList<>();
+        organizations.add(new Organization("Java Online Projects", "https://javaops.ru/", LocalDate.ofYearDay(2013, 10), null, "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
+        organizations.add(new Organization("Wrike", "https://www.wrike.com/vj/", LocalDate.ofYearDay(2014, 10), LocalDate.ofYearDay(2016, 1), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."));
+        organizations.add(new Organization("RIT Center", null, LocalDate.ofYearDay(2012, 4), LocalDate.ofYearDay(2014, 10), "Java архитектор", "Организация процесса разработки системы ERP для разных окружений: релизная политика, версионирование, ведение CI (Jenkins), миграция базы (кастомизация Flyway), конфигурирование системы (pgBoucer, Nginx), AAA via SSO. Архитектура БД и серверной части системы. Разработка интергационных сервисов: CMIS, BPMN2, 1C (WebServices), сервисов общего назначения (почта, экспорт в pdf, doc, html). Интеграция Alfresco JLAN для online редактирование из браузера документов MS Office. Maven + plugin development, Ant, Apache Commons, Spring security, Spring MVC, Tomcat,WSO2, xcmis, OpenCmis, Bonita, Python scripting, Unix shell remote scripting via ssh tunnels, PL/Python"));
+        organizations.add(new Organization("Luxoft (Deutsche Bank)", "http://www.luxoft.ru/", LocalDate.ofYearDay(2010, 12), LocalDate.ofYearDay(2012, 4), "Ведущий программист", "Участие в проекте Deutsche Bank CRM (WebLogic, Hibernate, Spring, Spring MVC, SmartGWT, GWT, Jasper, Oracle). Реализация клиентской и серверной части CRM. Реализация RIA-приложения для администрирования, мониторинга и анализа результатов в области алгоритмического трейдинга. JPA, Spring, Spring-MVC, GWT, ExtGWT (GXT), Highstock, Commet, HTML5."));
+        organizations.add(new Organization("Yota", "https://www.yota.ru/", LocalDate.ofYearDay(2008, 6), LocalDate.ofYearDay(2010, 12), "Ведущий специалист", "Дизайн и имплементация Java EE фреймворка для отдела \"Платежные Системы\" (GlassFish v2.1, v3, OC4J, EJB3, JAX-WS RI 2.1, Servlet 2.4, JSP, JMX, JMS, Maven2). Реализация администрирования, статистики и мониторинга фреймворка. Разработка online JMX клиента (Python/ Jython, Django, ExtJS)"));
+        organizations.add(new Organization("Enkata", "https://www.pega.com/products/platform/robotic-process-automation", LocalDate.ofYearDay(2007, 3), LocalDate.ofYearDay(2008, 6), "Разработчик ПО", "Реализация клиентской (Eclipse RCP) и серверной (JBoss 4.2, Hibernate 3.0, Tomcat, JMS) частей кластерного J2EE приложения (OLAP, Data mining)."));
+        organizations.add(new Organization("Siemens AG", "https://new.siemens.com/ru/ru.html", LocalDate.ofYearDay(2005, 1), LocalDate.ofYearDay(2007, 2), "Разработчик ПО", "Разработка информационной модели, проектирование интерфейсов, реализация и отладка ПО на мобильной IN платформе Siemens @vantage (Java, Unix)."));
+        organizations.add(new Organization("Alcatel", "http://www.alcatel.ru/", LocalDate.ofYearDay(1997, 9), LocalDate.ofYearDay(2005, 1), "Инженер по аппаратному и программному тестированию", "Тестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM)."));
+        r.setContent(SectionType.EXPERIENCE, new OrganizationContent(organizations));
 
-        Organization education = new Organization();
-        education.addDatesText("Coursera", "03/2013", "05/2013", "\"Functional Programming Principles in Scala\" by Martin Odersky");
-        education.addDatesText("Luxoft", "03/2011", "04/2011", "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"");
-        education.addDatesText("Siemens AG", "01/2005", "04/2005", "3 месяца обучения мобильным IN сетям (Берлин)");
-        education.addDatesText("Alcatel", "09/1997", "03/1998", "6 месяцев обучения цифровым телефонным сетям (Москва)");
-        education.addDatesText("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "09/1993", "07/1996", "Аспирантура (программист С, С++)");
-        education.addDatesText("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "09/1987", "07/1993", "Инженер (программист Fortran, C)");
-        education.addDatesText("Заочная физико-техническая школа при МФТИ", "09/1984", "06/1987", "Закончил с отличием");
-        content.put(SectionType.EDUCATION, education);
+        List<Organization> education = new ArrayList<>();
+        education.add(new Organization("Coursera", "https://www.coursera.org/learn/progfun1", LocalDate.ofYearDay(2013, 3), LocalDate.ofYearDay(2013, 5), "\"Functional Programming Principles in Scala\" by Martin Odersky", null));
+        education.add(new Organization("Luxoft", "https://www.luxoft-training.ru/kurs/obektno-orientirovannyy_analiz_i_proektirovanie_na_uml.html", LocalDate.ofYearDay(2011, 3), LocalDate.ofYearDay(2011, 4), "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"", null));
+        education.add(new Organization("Siemens AG", "https://new.siemens.com/ru/ru.html", LocalDate.ofYearDay(2005, 1), LocalDate.ofYearDay(2005, 4), "3 месяца обучения мобильным IN сетям (Берлин)", null));
+        education.add(new Organization("Alcatel", "http://www.alcatel.ru/", LocalDate.ofYearDay(1997, 9), LocalDate.ofYearDay(1998, 3), "6 месяцев обучения цифровым телефонным сетям (Москва)", null));
+        Organization spb = new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "https://itmo.ru/ru/", LocalDate.ofYearDay(1993, 9), LocalDate.ofYearDay(1996, 7), "Аспирантура (программист С, С++)", null);
+        spb.addPeriod(LocalDate.ofYearDay(1987, 7), LocalDate.ofYearDay(1993, 7), "Инженер (программист Fortran, C)", null);
+        education.add(spb);
+        education.add(new Organization("Заочная физико-техническая школа при МФТИ", "http://www.school.mipt.ru/", LocalDate.ofYearDay(1984, 9), LocalDate.ofYearDay(1987, 6), "Закончил с отличием", null));
+        r.setContent(SectionType.EDUCATION, new OrganizationContent(education));
 
         System.out.println(r.getFullName());
-        System.out.println(r.getContacts());
-        System.out.println(r.getContent());
+        for (ContactType c : ContactType.values()) {
+            System.out.println(c.getTitle() + r.getContact(c));
+        }
+        for (SectionType s : SectionType.values()) {
+            System.out.println(s.getTitle() + "\n" + r.getContent(s));
+        }
     }
 }

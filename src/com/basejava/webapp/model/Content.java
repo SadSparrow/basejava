@@ -1,4 +1,4 @@
 package com.basejava.webapp.model;
 
-public interface Content {
+public abstract class Content {
 }
