@@ -8,8 +8,18 @@ import java.util.List;
 
 public class ResumeTestData {
     public static void main(String[] args) {
-        Resume r = new Resume("uuid1", "Григорий Кислин");
+        Resume r = createResume("uuid1", "Григорий Кислин");
+        System.out.println(r.getFullName());
+        for (ContactType c : ContactType.values()) {
+            System.out.println(c.getTitle() + r.getContact(c));
+        }
+        for (SectionType s : SectionType.values()) {
+            System.out.println(s.getTitle() + "\n" + r.getContent(s));
+        }
+    }
 
+    public static Resume createResume(String uuid, String fullname) {
+        Resume r = new Resume(uuid, fullname);
         r.setContacts(ContactType.PHONE, "+7(921) 855-0482");
         r.setContacts(ContactType.SKYPE, "grigory.kislin");
         r.setContacts(ContactType.MAIl, "gkislin@yandex.ru");
@@ -65,13 +75,6 @@ public class ResumeTestData {
         education.add(spb);
         education.add(new Organization("Заочная физико-техническая школа при МФТИ", "http://www.school.mipt.ru/", LocalDate.ofYearDay(1984, 9), LocalDate.ofYearDay(1987, 6), "Закончил с отличием", null));
         r.setContent(SectionType.EDUCATION, new OrganizationContent(education));
-
-        System.out.println(r.getFullName());
-        for (ContactType c : ContactType.values()) {
-            System.out.println(c.getTitle() + r.getContact(c));
-        }
-        for (SectionType s : SectionType.values()) {
-            System.out.println(s.getTitle() + "\n" + r.getContent(s));
-        }
+        return r;
     }
 }
