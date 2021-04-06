@@ -3,7 +3,7 @@ package com.basejava.webapp.model;
 import java.util.List;
 import java.util.Objects;
 
-public class StringListContent extends Content {
+public class StringListContent extends AbstractContent {
     private final List<String> stringList;
 
     public StringListContent(List<String> stringList) {

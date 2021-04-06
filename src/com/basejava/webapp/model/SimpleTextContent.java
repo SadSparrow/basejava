@@ -2,12 +2,8 @@ package com.basejava.webapp.model;
 
 import java.util.Objects;
 
-public class SimpleTextContent extends Content {
+public class SimpleTextContent extends AbstractContent {
     private final String simpleText;
-
-    public SimpleTextContent() {
-        simpleText = "simpleText - поле не заполнено";
-    }
 
     public SimpleTextContent(String simpleText) {
         Objects.requireNonNull(simpleText, "simpleText must not be null");
