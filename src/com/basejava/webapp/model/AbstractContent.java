@@ -1,4 +1,6 @@
 package com.basejava.webapp.model;
 
-public abstract class AbstractContent {
+import java.io.Serializable;
+
+public abstract class AbstractContent implements Serializable {
 }

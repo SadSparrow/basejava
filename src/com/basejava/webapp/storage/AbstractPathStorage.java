@@ -7,9 +7,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     private final Path directory;
@@ -32,7 +32,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         }
     }
 
-    protected abstract void doWrite(Resume r, OutputStream os) throws IOException;
+    protected abstract void doWrite(Resume resume, OutputStream os) throws IOException;
 
     @Override
     protected void doSave(Resume resume, Path key) {
@@ -77,7 +77,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected List<Resume> getList() {
         try {
-            return Files.list(directory).forEach(this::getResume); //?
+            return Files.list(directory).map(this::getResume).collect(Collectors.toList());
         } catch (IOException e) {
             throw new StorageException("getList error", "", e);
         }

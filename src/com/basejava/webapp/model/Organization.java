@@ -2,6 +2,7 @@ package com.basejava.webapp.model;
 
 import com.basejava.webapp.util.DateUtil;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class Organization {
+public class Organization implements Serializable {
     private final Link homePage;
     private List<Period> period = new ArrayList<>();
 
@@ -63,7 +64,7 @@ public class Organization {
         return "\nOrganization{" + "homePage=" + homePage + period.toString() + '}';
     }
 
-    public static class Period {
+    public static class Period implements Serializable{
         private final LocalDate startDate;
         private final LocalDate endDate;
         private final String title;
