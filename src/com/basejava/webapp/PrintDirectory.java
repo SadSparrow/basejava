@@ -24,8 +24,8 @@ public class PrintDirectory {
             }
         }
         int count = dir.toPath().getNameCount() - parent.getNameCount();
-        System.out.println("\t".repeat(count) + "\uF030" + dir.getName());
-        javaFiles.forEach(file -> System.out.println("\t".repeat(count) + "\t\uF032" + file.getName()));
+        System.out.println("\t".repeat(count) + "\uF030 " + dir.getName());
+        javaFiles.forEach(file -> System.out.println("\t".repeat(count) + "\t\uF032 " + file.getName()));
         directories.forEach(PrintDirectory::printDirectoryDeeply); //directories.forEach(file -> printDirectoryDeeply(file));
     }
 
@@ -42,11 +42,11 @@ public class PrintDirectory {
             @Override
             public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
                 int count = path.getNameCount() - parent.getNameCount();
-                System.out.println("\t".repeat(count) + "\uF030" + path.getFileName());
+                System.out.println("\t".repeat(count) + "\uF030 " + path.getFileName());
                 File[] files = path.toFile().listFiles();
                 for (File value : Objects.requireNonNull(files)) {
                     if (value.isFile()) {
-                        System.out.println("\t".repeat(count) + "\t\uF032" + value.getName());
+                        System.out.println("\t".repeat(count) + "\t\uF032 " + value.getName());
                     }
                 }
                 return FileVisitResult.CONTINUE;
