@@ -23,4 +23,9 @@ public class Serialization implements SerializationStrategy {
             throw new StorageException("Error read resume", null, e);
         }
     }
+
+    @Override
+    public void testInterface() {
+        System.out.println("serialization1");
+    }
 }

@@ -8,14 +8,14 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 
 public class PathStorage extends AbstractPathStorage {
-    private final Serialization serialization;
+    private final SerializationStrategy serialization;
 
-    public PathStorage(Path directory, Serialization serialization) {
+    public PathStorage(Path directory, SerializationStrategy serialization) {
         super(directory);
         this.serialization = serialization;
     }
 
-    public PathStorage(String dir, Serialization serialization) {
+    public PathStorage(String dir, SerializationStrategy serialization) {
         super(dir);
         this.serialization = serialization;
     }
@@ -28,5 +28,11 @@ public class PathStorage extends AbstractPathStorage {
     @Override
     protected Resume doRead(InputStream is) throws IOException {
         return serialization.doRead(is);
+    }
+
+    @Override
+    public void testClass() {
+        System.out.println("from PathStorage");
+        serialization.testInterface();
     }
 }

@@ -100,4 +100,6 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
             throw new StorageException("Directory read error ", "(size)", e);
         }
     }
+
+    abstract void testClass();
 }

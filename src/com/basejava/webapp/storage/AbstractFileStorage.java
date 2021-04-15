@@ -97,4 +97,6 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     public int size() {
         return Objects.requireNonNull(directory.list(), "Directory read error (null)").length;
     }
+
+    abstract void testClass();
 }

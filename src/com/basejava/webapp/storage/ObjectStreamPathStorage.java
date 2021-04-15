@@ -31,4 +31,9 @@ public class ObjectStreamPathStorage extends AbstractPathStorage{
             throw new StorageException("Error read resume", null, e);
         }
     }
+
+    @Override
+    void testClass() {
+
+    }
 }
