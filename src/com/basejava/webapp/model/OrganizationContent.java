@@ -3,10 +3,10 @@ package com.basejava.webapp.model;
 import java.util.List;
 import java.util.Objects;
 
-public class OrganizationAbstractContent extends AbstractContent {
+public class OrganizationContent extends AbstractContent {
     private final List<Organization> organizations;
 
-    public OrganizationAbstractContent(List<Organization> organizations) {
+    public OrganizationContent(List<Organization> organizations) {
         Objects.requireNonNull(organizations, "organizations must not be null");
         this.organizations = organizations;
     }
@@ -20,7 +20,7 @@ public class OrganizationAbstractContent extends AbstractContent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OrganizationAbstractContent that = (OrganizationAbstractContent) o;
+        OrganizationContent that = (OrganizationContent) o;
 
         return organizations.equals(that.organizations);
     }

@@ -7,7 +7,6 @@ import java.io.*;
 
 public class Serialization implements SerializationStrategy {
 
-
     @Override
     public void doWrite(Resume resume, OutputStream os) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
@@ -22,10 +21,5 @@ public class Serialization implements SerializationStrategy {
         } catch (ClassNotFoundException e) {
             throw new StorageException("Error read resume", null, e);
         }
-    }
-
-    @Override
-    public void testInterface() {
-        System.out.println("serialization1");
     }
 }

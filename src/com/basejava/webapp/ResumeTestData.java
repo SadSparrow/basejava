@@ -63,7 +63,7 @@ public class ResumeTestData {
         organizations.add(new Organization("Enkata", "https://www.pega.com/products/platform/robotic-process-automation", LocalDate.ofYearDay(2007, 3), LocalDate.ofYearDay(2008, 6), "Разработчик ПО", "Реализация клиентской (Eclipse RCP) и серверной (JBoss 4.2, Hibernate 3.0, Tomcat, JMS) частей кластерного J2EE приложения (OLAP, Data mining)."));
         organizations.add(new Organization("Siemens AG", "https://new.siemens.com/ru/ru.html", LocalDate.ofYearDay(2005, 1), LocalDate.ofYearDay(2007, 2), "Разработчик ПО", "Разработка информационной модели, проектирование интерфейсов, реализация и отладка ПО на мобильной IN платформе Siemens @vantage (Java, Unix)."));
         organizations.add(new Organization("Alcatel", "http://www.alcatel.ru/", LocalDate.ofYearDay(1997, 9), LocalDate.ofYearDay(2005, 1), "Инженер по аппаратному и программному тестированию", "Тестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM)."));
-        r.setContent(SectionType.EXPERIENCE, new OrganizationAbstractContent(organizations));
+        r.setContent(SectionType.EXPERIENCE, new OrganizationContent(organizations));
 
         List<Organization> education = new ArrayList<>();
         education.add(new Organization("Coursera", "https://www.coursera.org/learn/progfun1", LocalDate.ofYearDay(2013, 3), LocalDate.ofYearDay(2013, 5), "\"Functional Programming Principles in Scala\" by Martin Odersky", null));
@@ -74,7 +74,7 @@ public class ResumeTestData {
         spb.addPeriod(LocalDate.ofYearDay(1987, 7), LocalDate.ofYearDay(1993, 7), "Инженер (программист Fortran, C)", null);
         education.add(spb);
         education.add(new Organization("Заочная физико-техническая школа при МФТИ", "http://www.school.mipt.ru/", LocalDate.ofYearDay(1984, 9), LocalDate.ofYearDay(1987, 6), "Закончил с отличием", null));
-        r.setContent(SectionType.EDUCATION, new OrganizationAbstractContent(education));
+        r.setContent(SectionType.EDUCATION, new OrganizationContent(education));
         return r;
     }
 }

@@ -22,6 +22,11 @@ public abstract class AbstractStorageTest {
     protected static final String UUID_4 = "uuid4";
     protected static final String UUID_5 = "uuid5";
 
+    private static final Resume R1 = createResume(UUID_1, "C");
+    private static final Resume R2 = createResume(UUID_2, "Bb");
+    private static final Resume R3 = createResume(UUID_3, "Ba");
+    private static final Resume R4 = createResume(UUID_4, "A");
+
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
@@ -29,10 +34,10 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() {
         storage.clear();
-        storage.save(createResume(UUID_1, "C"));
-        storage.save(createResume(UUID_2, "Bb"));
-        storage.save(createResume(UUID_3, "Ba"));
-        storage.save(createResume(UUID_4, "A"));
+        storage.save(R1);
+        storage.save(R2);
+        storage.save(R3);
+        storage.save(R4);
     }
 
     @Test
@@ -62,13 +67,14 @@ public abstract class AbstractStorageTest {
 
     @Test(expected = ExistStorageException.class)
     public void saveWrong() {
-        storage.save(createResume(UUID_4, "A"));
+        storage.save(R4);
     }
 
     @Test
     public void get() {
-        Resume r = createResume(UUID_1, "C");
-        Assert.assertEquals(r, storage.get(UUID_1));
+        Assert.assertEquals(R1, storage.get(UUID_1));
+        Assert.assertEquals(R2, storage.get(UUID_2));
+        Assert.assertEquals(R3, storage.get(UUID_3));
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -91,11 +97,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllSorted() {
         List<Resume> actualResumes = storage.getAllSorted();
-        List<Resume> expectedResumes = Arrays.asList(
-                createResume(UUID_4, "A"),
-                createResume(UUID_3, "Ba"),
-                createResume(UUID_2, "Bb"),
-                createResume(UUID_1, "C"));
+        List<Resume> expectedResumes = Arrays.asList(R4, R3, R2, R1);
         Assert.assertEquals(expectedResumes, actualResumes);
     }
 
