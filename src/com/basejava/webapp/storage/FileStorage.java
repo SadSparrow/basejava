@@ -2,11 +2,14 @@ package com.basejava.webapp.storage;
 
 import com.basejava.webapp.exception.StorageException;
 import com.basejava.webapp.model.Resume;
+import com.basejava.webapp.storage.serialization.SerializationStrategy;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileStorage extends AbstractStorage<File> {
     private final File directory;
@@ -68,31 +71,25 @@ public class FileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected List<Resume> getList() {
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new StorageException("Directory read error", null);
-        }
-        List<Resume> list = new ArrayList<>(files.length);
-        for (File file : files) {
-            list.add(getResume(file));
-        }
-        return list;
+    protected List<Resume> getAll() {
+        return getFilesList().map(this::getResume).collect(Collectors.toList());
     }
-
 
     @Override
     public void clear() {
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                doDelete(file);
-            }
-        }
+        getFilesList().forEach(this::doDelete);
     }
 
     @Override
     public int size() {
-        return Objects.requireNonNull(directory.list(), "Directory read error (null)").length;
+        return (int) getFilesList().count();
+    }
+
+    private Stream<File> getFilesList() {
+        File[] files = directory.listFiles();
+        if (files == null) {
+            throw new StorageException("Directory read error (null)");
+        }
+        return Arrays.stream(files);
     }
 }

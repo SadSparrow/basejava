@@ -71,10 +71,10 @@ public abstract class AbstractStorage<K> implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         LOG.info("getAllSorted");
-        List<Resume> list = getList();
+        List<Resume> list = getAll();
         list.sort(Resume::compareTo);
         return list;
     }
 
-    protected abstract List<Resume> getList();
+    protected abstract List<Resume> getAll();
 }
