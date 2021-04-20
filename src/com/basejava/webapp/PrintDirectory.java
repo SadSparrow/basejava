@@ -26,14 +26,44 @@ public class PrintDirectory {
         int count = dir.toPath().getNameCount() - parent.getNameCount();
         System.out.println("\t".repeat(count) + "\uF030 " + dir.getName());
         javaFiles.forEach(file -> System.out.println("\t".repeat(count) + "\t\uF032 " + file.getName()));
-        directories.forEach(PrintDirectory::printDirectoryDeeply); //directories.forEach(file -> printDirectoryDeeply(file));
+        //directories.forEach(file -> printDirectoryDeeply(file));
+        for (File file : directories) {
+            printDirectoryDeeply(file);
+        }
+    }
+
+    //фи
+    public static void printDirectory(File dir) {
+        File[] files = dir.listFiles();
+        List<File> javaFiles = new ArrayList<>();
+        List<File> directories = new ArrayList<>();
+
+        for (File value : Objects.requireNonNull(files)) {
+            if (value.isFile()) {
+                javaFiles.add(value);
+            } else if (value.isDirectory()) {
+                directories.add(value);
+            }
+        }
+
+        int count = dir.toPath().getNameCount() - parent.getNameCount();
+
+        for (File arrFile : javaFiles) {
+            System.out.println("\t".repeat(count-1) + "\t\uF032 " + arrFile.getName());
+        }
+
+        for (File arrDirectory : directories) {
+            System.out.println("\t".repeat(count) + "\uF030 " + arrDirectory.getName());
+            printDirectory(arrDirectory);
+        }
     }
 
     public static void main(String[] args) throws IOException {
         File dir = new File("./src/com"); //File dir = new File("./src/com/basejava/webapp");
         parent = Paths.get(dir.toString());
-        printDirectoryDeeply(dir);
-        printDir(dir);
+//        printDirectoryDeeply(dir);
+//        printDir(dir);
+        printDirectory(dir);
     }
 
     //for fun
