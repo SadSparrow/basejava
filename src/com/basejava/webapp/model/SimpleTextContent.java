@@ -1,9 +1,15 @@
 package com.basejava.webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleTextContent extends AbstractContent {
-    private final String simpleText;
+    private String simpleText;
+
+    public SimpleTextContent() {
+    }
 
     public SimpleTextContent(String simpleText) {
         Objects.requireNonNull(simpleText, "simpleText must not be null");

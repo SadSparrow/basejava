@@ -39,7 +39,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.createFile(key);
         } catch (IOException e) {
-            throw new StorageException("Couldn't create file " + key.toAbsolutePath(), key.getFileName().toString(), e);
+            throw new StorageException("Couldn't create file " + key.toAbsolutePath(), getFileName(key), e);
         }
         doUpdate(resume, key);
     }
@@ -49,7 +49,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             return serialization.doRead(new BufferedInputStream(Files.newInputStream(key)));
         } catch (IOException e) {
-            throw new StorageException("Path read error", key.getFileName().toString(), e);
+            throw new StorageException("Path read error", getFileName(key), e);
         }
     }
 
@@ -58,12 +58,13 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.deleteIfExists(key);
         } catch (IOException e) {
-            throw new StorageException("Path delete error", key.getFileName().toString(), e);
+            throw new StorageException("Path delete error", getFileName(key), e);
         }
     }
 
     @Override
     protected boolean isResumeExist(Path key) {
+        //return Files.isRegularFile(key); в решении так
         return Files.exists(key);
     }
 
@@ -74,7 +75,7 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected List<Resume> getAll() {
-        return getFilesList().map(this::getResume).collect(Collectors.toList());
+        return getFilesList().map(this::getResume).collect(Collectors.toList()); //в java 16 вместо .collect(Collectors.toList()) просто toList()
     }
 
     @Override
@@ -93,5 +94,9 @@ public class PathStorage extends AbstractStorage<Path> {
         } catch (IOException e) {
             throw new StorageException("Directory read error", e);
         }
+    }
+
+    private String getFileName(Path path) {
+        return path.getFileName().toString();
     }
 }

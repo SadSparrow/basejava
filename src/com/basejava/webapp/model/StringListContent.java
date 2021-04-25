@@ -1,10 +1,16 @@
 package com.basejava.webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.List;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class StringListContent extends AbstractContent {
-    private final List<String> stringList;
+    private List<String> stringList;
+
+    public StringListContent() {
+    }
 
     public StringListContent(List<String> stringList) {
         Objects.requireNonNull(stringList, "stringList must not be null");

@@ -1,10 +1,16 @@
 package com.basejava.webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.List;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class OrganizationContent extends AbstractContent {
-    private final List<Organization> organizations;
+    private List<Organization> organizations;
+
+    public OrganizationContent() {
+    }
 
     public OrganizationContent(List<Organization> organizations) {
         Objects.requireNonNull(organizations, "organizations must not be null");

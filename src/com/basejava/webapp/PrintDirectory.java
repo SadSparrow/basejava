@@ -26,14 +26,28 @@ public class PrintDirectory {
         int count = dir.toPath().getNameCount() - parent.getNameCount();
         System.out.println("\t".repeat(count) + "\uF030 " + dir.getName());
         javaFiles.forEach(file -> System.out.println("\t".repeat(count) + "\t\uF032 " + file.getName()));
-        //directories.forEach(file -> printDirectoryDeeply(file));
-        for (File file : directories) {
-            printDirectoryDeeply(file);
+        directories.forEach(PrintDirectory::printDirectoryDeeply);
+    }
+
+    public static void printDirectory(File dir, String offset) {
+        File[] files = dir.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    System.out.println(offset + "\t\uF032 " + file.getName());
+                }
+            }
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    System.out.println(offset + "\uF030 " + file.getName());
+                    printDirectory(file, offset + "  ");
+                }
+            }
         }
     }
 
-    //фи
-    public static void printDirectory(File dir) {
+    public static void printD(File dir, String offset) {
         File[] files = dir.listFiles();
         List<File> javaFiles = new ArrayList<>();
         List<File> directories = new ArrayList<>();
@@ -45,25 +59,19 @@ public class PrintDirectory {
                 directories.add(value);
             }
         }
-
-        int count = dir.toPath().getNameCount() - parent.getNameCount();
-
-        for (File arrFile : javaFiles) {
-            System.out.println("\t".repeat(count-1) + "\t\uF032 " + arrFile.getName());
-        }
-
-        for (File arrDirectory : directories) {
-            System.out.println("\t".repeat(count) + "\uF030 " + arrDirectory.getName());
-            printDirectory(arrDirectory);
-        }
+        System.out.println(offset + "\uF030 " + dir.getName());
+        javaFiles.forEach(file -> System.out.println(offset + "\t\uF032 " + file.getName()));
+        directories.forEach(file -> printD(file, offset + " "));
     }
+
 
     public static void main(String[] args) throws IOException {
         File dir = new File("./src/com"); //File dir = new File("./src/com/basejava/webapp");
         parent = Paths.get(dir.toString());
-//        printDirectoryDeeply(dir);
-//        printDir(dir);
-        printDirectory(dir);
+        printDirectoryDeeply(dir);
+        printDirectory(dir, "");
+        printDir(dir);
+        printD(dir, "");
     }
 
     //for fun

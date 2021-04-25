@@ -1,7 +1,11 @@
 package com.basejava.webapp.model;
 
 import com.basejava.webapp.util.DateUtil;
+import com.basejava.webapp.util.LocalDateAdapter;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
@@ -10,9 +14,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
-    private final Link homePage;
+    private Link homePage;
     private List<Period> period = new ArrayList<>();
+
+    public Organization() {
+    }
 
     public Organization(Link homePage, List<Period> period) {
         this.homePage = homePage;
@@ -64,11 +72,17 @@ public class Organization implements Serializable {
         return "\nOrganization{" + "homePage=" + homePage + period.toString() + '}';
     }
 
-    public static class Period implements Serializable{
-        private final LocalDate startDate;
-        private final LocalDate endDate;
-        private final String title;
-        private final String description;
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Period implements Serializable {
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate startDate;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate endDate;
+        private String title;
+        private String description;
+
+        public Period() {
+        }
 
         public Period(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
             this(DateUtil.of(startYear, startMonth), DateUtil.of(endYear, endMonth), title, description);
