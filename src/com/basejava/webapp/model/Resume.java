@@ -57,6 +57,10 @@ public class Resume implements Comparable<Resume>, Serializable {
         return content.get(type);
     }
 
+    public Map<SectionType, AbstractContent> getContents() {
+        return content;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

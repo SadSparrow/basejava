@@ -27,6 +27,14 @@ public class Organization implements Serializable {
         this.period = period;
     }
 
+    public Link getHomePage() {
+        return homePage;
+    }
+
+    public List<Period> getPeriod() {
+        return period;
+    }
+
     public Organization(String name, String url, Period... periods) {
         this(new Link(name, url), Arrays.asList(periods));
     }
@@ -41,12 +49,22 @@ public class Organization implements Serializable {
         this.period.add(new Period(startDate, DateUtil.NOW, title, description));
     }
 
-    public void addPeriod(LocalDate startDate, LocalDate endDate, String title, String description) {
-        this.period.add(new Period(startDate, endDate, title, description));
+    public Organization(String name, String url, int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
+        this.homePage = new Link(name, url);
+        this.period.add(new Period(startYear, startMonth, endYear, endMonth, title, description));
     }
 
-    public void addPeriod(LocalDate startDate, String title, String description) {
-        this.period.add(new Period(startDate, DateUtil.NOW, title, description));
+    public Organization(String name, String url, int startYear, Month startMonth, String title, String description) {
+        this.homePage = new Link(name, url);
+        this.period.add(new Period(startYear, startMonth, title, description));
+    }
+
+    public void addPeriod(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
+        this.period.add(new Period(startYear, startMonth, endYear, endMonth, title, description));
+    }
+
+    public void addPeriod(int startYear, Month startMonth, String title, String description) {
+        this.period.add(new Period(startYear, startMonth, title, description));
     }
 
     @Override
@@ -103,6 +121,22 @@ public class Organization implements Serializable {
 
         public Period(LocalDate startDate, String title, String description) {
             this(startDate, DateUtil.NOW, title, description);
+        }
+
+        public LocalDate getStartDate() {
+            return startDate;
+        }
+
+        public LocalDate getEndDate() {
+            return endDate;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
         }
 
         @Override
