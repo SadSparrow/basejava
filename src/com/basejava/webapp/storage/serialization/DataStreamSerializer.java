@@ -29,7 +29,7 @@ public class DataStreamSerializer implements SerializationStrategy {
             for (Map.Entry<SectionType, AbstractContent> entry : content.entrySet()) {
                 dos.writeUTF(entry.getKey().name());
                 switch (entry.getKey()) {
-                    case OBJECTIVE, PERSONAL -> dos.writeUTF(r.getContent(entry.getKey()).toString());
+                    case OBJECTIVE, PERSONAL -> dos.writeUTF(String.valueOf(r.getContent(entry.getKey())));
                     case ACHIEVEMENT, QUALIFICATIONS -> writeStringListContent(dos, r, entry.getKey());
                     case EXPERIENCE, EDUCATION -> writeOrganization(dos, r, entry.getKey());
                 }
@@ -53,8 +53,8 @@ public class DataStreamSerializer implements SerializationStrategy {
                 SectionType type = SectionType.valueOf(dis.readUTF());
                 switch (type) {
                     case OBJECTIVE, PERSONAL -> resume.setContent(type, new SimpleTextContent(dis.readUTF()));
-                    case ACHIEVEMENT, QUALIFICATIONS -> readStringListContent(dis, resume);
-                    case EXPERIENCE, EDUCATION -> readOrganization(dis, resume);
+                    case ACHIEVEMENT, QUALIFICATIONS -> resume.setContent(type, new StringListContent(readStringListContent(dis)));
+                    case EXPERIENCE, EDUCATION -> resume.setContent(type, new OrganizationContent(readOrganization(dis)));
                 }
             }
             return resume;
@@ -62,7 +62,6 @@ public class DataStreamSerializer implements SerializationStrategy {
     }
 
     private void writeStringListContent(DataOutputStream dos, Resume resume, SectionType type) throws IOException {
-        dos.writeUTF(type.toString());
         StringListContent list = (StringListContent) resume.getContent(type);
         List<String> strings = list.getStringList();
         dos.writeInt(strings.size());
@@ -71,18 +70,16 @@ public class DataStreamSerializer implements SerializationStrategy {
         }
     }
 
-    private void readStringListContent(DataInputStream dis, Resume resume) throws IOException {
-        SectionType sectionType = SectionType.valueOf(dis.readUTF());
+    private List<String> readStringListContent(DataInputStream dis) throws IOException {
         List<String> strings = new ArrayList<>();
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
             strings.add(dis.readUTF());
         }
-        resume.setContent(sectionType, new StringListContent(strings));
+        return strings;
     }
 
     private void writeOrganization(DataOutputStream dos, Resume resume, SectionType type) throws IOException {
-        dos.writeUTF(type.toString());
         OrganizationContent oList = (OrganizationContent) resume.getContent(type);
         List<Organization> o = oList.getOrganizations();
         dos.writeInt(o.size());
@@ -97,8 +94,7 @@ public class DataStreamSerializer implements SerializationStrategy {
         }
     }
 
-    private void readOrganization(DataInputStream dis, Resume resume) throws IOException {
-        SectionType sectionType = SectionType.valueOf(dis.readUTF());
+    private List<Organization> readOrganization(DataInputStream dis) throws IOException {
         List<Organization> o = new ArrayList<>();
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
@@ -108,7 +104,7 @@ public class DataStreamSerializer implements SerializationStrategy {
             }
             o.add(new Organization(homePage, readPeriod(dis)));
         }
-        resume.setContent(sectionType, new OrganizationContent(o));
+        return o;
     }
 
     private void writePeriod(DataOutputStream dos, Organization o) throws IOException {
