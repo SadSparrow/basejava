@@ -6,7 +6,9 @@ import com.basejava.webapp.util.DateUtil;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class DataStreamSerializer implements SerializationStrategy {
@@ -87,8 +89,8 @@ public class DataStreamSerializer implements SerializationStrategy {
     private void writeOrganization(DataOutputStream dos, Resume resume, SectionType type) throws IOException {
         dos.writeUTF(type.toString());
         OrganizationContent oList = (OrganizationContent) resume.getContent(type);
-        Organization[] o = oList.getOrganizations().toArray(new Organization[0]);
-        dos.writeInt(o.length);
+        List<Organization> o = oList.getOrganizations();
+        dos.writeInt(o.size());
         for (Organization organization : o) {
             dos.writeUTF(organization.getHomePage().getName()); //Link
             if (organization.getHomePage().getUrl() != null) {
@@ -102,22 +104,21 @@ public class DataStreamSerializer implements SerializationStrategy {
 
     private void readOrganization(DataInputStream dis, Resume resume) throws IOException {
         SectionType sectionType = SectionType.valueOf(dis.readUTF());
-        Organization[] o = new Organization[dis.readInt()];
-        for (int i = 0; i < o.length; i++) {
-            String name = dis.readUTF();
-            String url = dis.readUTF();
-            if (url.equals("null")) {
-                o[i] = new Organization(name, null, readPeriod(dis));
-            } else {
-                o[i] = new Organization(name, url, readPeriod(dis));
+        List<Organization> o = new ArrayList<>();
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            Link homePage = new Link(dis.readUTF(), dis.readUTF());
+            if (homePage.getUrl().equals("null")) {
+                homePage.setUrl(null);
             }
+            o.add(new Organization(homePage, readPeriod(dis)));
         }
-        resume.setContent(sectionType, new OrganizationContent(Arrays.asList(o)));
+        resume.setContent(sectionType, new OrganizationContent(o));
     }
 
     private void writePeriod(DataOutputStream dos, Organization o) throws IOException {
-        Organization.Period[] periods = o.getPeriod().toArray(new Organization.Period[0]);
-        dos.writeInt(periods.length);
+        List<Organization.Period> periods = o.getPeriod();
+        dos.writeInt(periods.size());
         for (Organization.Period period : periods) {
             if (period.getDescription() != null) {
                 dos.writeUTF(period.getDescription()); //description
@@ -130,14 +131,15 @@ public class DataStreamSerializer implements SerializationStrategy {
         }
     }
 
-    private Organization.Period[] readPeriod(DataInputStream dis) throws IOException {
-        Organization.Period[] periods = new Organization.Period[dis.readInt()];
-        for (int i = 0; i < periods.length; i++) {
+    private List<Organization.Period> readPeriod(DataInputStream dis) throws IOException {
+        List<Organization.Period> periods = new ArrayList<>();
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
             String description = dis.readUTF();
             if (description.equals("null")) {
-                periods[i] = new Organization.Period(readDate(dis), readDate(dis), dis.readUTF(), null);
+                periods.add(new Organization.Period(readDate(dis), readDate(dis), dis.readUTF(), null));
             } else {
-                periods[i] = new Organization.Period(readDate(dis), readDate(dis), dis.readUTF(), description);
+                periods.add(new Organization.Period(readDate(dis), readDate(dis), dis.readUTF(), description));
             }
         }
         return periods;
