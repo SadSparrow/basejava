@@ -28,16 +28,11 @@ public class DataStreamSerializer implements SerializationStrategy {
             Map<SectionType, AbstractContent> content = r.getContents();
             dos.writeInt(content.size());
             for (Map.Entry<SectionType, AbstractContent> entry : content.entrySet()) {
-                if (entry.getValue() instanceof SimpleTextContent) {
-                    dos.writeUTF("SimpleTextContent");
-                    dos.writeUTF(entry.getKey().name());
-                    dos.writeUTF(r.getContent(entry.getKey()).toString());
-                } else if (entry.getValue() instanceof StringListContent) {
-                    dos.writeUTF("StringListContent");
-                    writeStringListContent(dos, r, entry.getKey());
-                } else if (entry.getValue() instanceof OrganizationContent) {
-                    dos.writeUTF("OrganizationContent");
-                    writeOrganization(dos, r, entry.getKey());
+                dos.writeUTF(entry.getKey().name());
+                switch (entry.getKey()) {
+                    case OBJECTIVE, PERSONAL -> dos.writeUTF(r.getContent(entry.getKey()).toString());
+                    case ACHIEVEMENT, QUALIFICATIONS -> writeStringListContent(dos, r, entry.getKey());
+                    case EXPERIENCE, EDUCATION -> writeOrganization(dos, r, entry.getKey());
                 }
             }
         }
@@ -56,11 +51,11 @@ public class DataStreamSerializer implements SerializationStrategy {
 
             int size2 = dis.readInt();
             for (int i = 0; i < size2; i++) {
-                String marker = dis.readUTF();
-                switch (marker) {
-                    case "SimpleTextContent" -> resume.setContent(SectionType.valueOf(dis.readUTF()), new SimpleTextContent(dis.readUTF()));
-                    case "StringListContent" -> readStringListContent(dis, resume);
-                    case "OrganizationContent" -> readOrganization(dis, resume);
+                SectionType type = SectionType.valueOf(dis.readUTF());
+                switch (type) {
+                    case OBJECTIVE, PERSONAL -> resume.setContent(type, new SimpleTextContent(dis.readUTF()));
+                    case ACHIEVEMENT, QUALIFICATIONS -> readStringListContent(dis, resume);
+                    case EXPERIENCE, EDUCATION -> readOrganization(dis, resume);
                 }
             }
             return resume;
