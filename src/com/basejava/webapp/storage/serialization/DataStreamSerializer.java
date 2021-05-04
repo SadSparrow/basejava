@@ -7,7 +7,6 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -65,8 +64,8 @@ public class DataStreamSerializer implements SerializationStrategy {
     private void writeStringListContent(DataOutputStream dos, Resume resume, SectionType type) throws IOException {
         dos.writeUTF(type.toString());
         StringListContent list = (StringListContent) resume.getContent(type);
-        String[] strings = list.getStringList().toArray(new String[0]);
-        dos.writeInt(strings.length);
+        List<String> strings = list.getStringList();
+        dos.writeInt(strings.size());
         for (String string : strings) {
             dos.writeUTF(string);
         }
@@ -74,11 +73,12 @@ public class DataStreamSerializer implements SerializationStrategy {
 
     private void readStringListContent(DataInputStream dis, Resume resume) throws IOException {
         SectionType sectionType = SectionType.valueOf(dis.readUTF());
-        String[] strings = new String[dis.readInt()];
-        for (int i = 0; i < strings.length; i++) {
-            strings[i] = dis.readUTF();
+        List<String> strings = new ArrayList<>();
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            strings.add(dis.readUTF());
         }
-        resume.setContent(sectionType, new StringListContent(Arrays.asList(strings)));
+        resume.setContent(sectionType, new StringListContent(strings));
     }
 
     private void writeOrganization(DataOutputStream dos, Resume resume, SectionType type) throws IOException {
