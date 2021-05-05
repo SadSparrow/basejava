@@ -27,11 +27,12 @@ public class DataStreamSerializer implements SerializationStrategy {
             Map<SectionType, AbstractContent> content = r.getContents();
             dos.writeInt(content.size());
             for (Map.Entry<SectionType, AbstractContent> entry : content.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
+                SectionType type = entry.getKey();
+                dos.writeUTF(type.name());
                 switch (entry.getKey()) {
-                    case OBJECTIVE, PERSONAL -> dos.writeUTF(String.valueOf(r.getContent(entry.getKey())));
-                    case ACHIEVEMENT, QUALIFICATIONS -> writeStringListContent(dos, r, entry.getKey());
-                    case EXPERIENCE, EDUCATION -> writeOrganization(dos, r, entry.getKey());
+                    case OBJECTIVE, PERSONAL -> dos.writeUTF((((SimpleTextContent) r.getContent(type)).getSimpleText()));
+                    case ACHIEVEMENT, QUALIFICATIONS -> writeStringListContent(dos, ((StringListContent) r.getContent(type)).getStringList());
+                    case EXPERIENCE, EDUCATION -> writeOrganization(dos, ((OrganizationContent) r.getContent(type)).getOrganizations());
                 }
             }
         }
@@ -43,13 +44,13 @@ public class DataStreamSerializer implements SerializationStrategy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int size1 = dis.readInt();
-            for (int i = 0; i < size1; i++) {
+            int contactsSize = dis.readInt();
+            for (int i = 0; i < contactsSize; i++) {
                 resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
 
-            int size2 = dis.readInt();
-            for (int i = 0; i < size2; i++) {
+            int sectionsSize = dis.readInt();
+            for (int i = 0; i < sectionsSize; i++) {
                 SectionType type = SectionType.valueOf(dis.readUTF());
                 switch (type) {
                     case OBJECTIVE, PERSONAL -> resume.setContent(type, new SimpleTextContent(dis.readUTF()));
@@ -61,9 +62,7 @@ public class DataStreamSerializer implements SerializationStrategy {
         }
     }
 
-    private void writeStringListContent(DataOutputStream dos, Resume resume, SectionType type) throws IOException {
-        StringListContent list = (StringListContent) resume.getContent(type);
-        List<String> strings = list.getStringList();
+    private void writeStringListContent(DataOutputStream dos, List<String> strings) throws IOException {
         dos.writeInt(strings.size());
         for (String string : strings) {
             dos.writeUTF(string);
@@ -79,43 +78,32 @@ public class DataStreamSerializer implements SerializationStrategy {
         return strings;
     }
 
-    private void writeOrganization(DataOutputStream dos, Resume resume, SectionType type) throws IOException {
-        OrganizationContent oList = (OrganizationContent) resume.getContent(type);
-        List<Organization> o = oList.getOrganizations();
-        dos.writeInt(o.size());
-        for (Organization organization : o) {
-            dos.writeUTF(organization.getHomePage().getName()); //Link
-            if (organization.getHomePage().getUrl() != null) {
-                dos.writeUTF(organization.getHomePage().getUrl());
-            } else {
-                dos.writeUTF("null");
-            }
-            writePeriod(dos, organization);
+    private void writeOrganization(DataOutputStream dos, List<Organization> orgs) throws IOException {
+        dos.writeInt(orgs.size());
+        for (Organization org : orgs) {
+            Link link = org.getHomePage();
+            dos.writeUTF(link.getUrl() != null ? link.getUrl() : "null");
+            dos.writeUTF(link.getName());
+            writePeriod(dos, org);
         }
     }
 
     private List<Organization> readOrganization(DataInputStream dis) throws IOException {
-        List<Organization> o = new ArrayList<>();
+        List<Organization> orgs = new ArrayList<>();
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
-            Link homePage = new Link(dis.readUTF(), dis.readUTF());
-            if (homePage.getUrl().equals("null")) {
-                homePage.setUrl(null);
-            }
-            o.add(new Organization(homePage, readPeriod(dis)));
+            String url = dis.readUTF();
+            Link homePage = new Link(dis.readUTF(), url.equals("null") ? null : url);
+            orgs.add(new Organization(homePage, readPeriod(dis)));
         }
-        return o;
+        return orgs;
     }
 
-    private void writePeriod(DataOutputStream dos, Organization o) throws IOException {
-        List<Organization.Period> periods = o.getPeriod();
+    private void writePeriod(DataOutputStream dos, Organization org) throws IOException {
+        List<Organization.Period> periods = org.getPeriod();
         dos.writeInt(periods.size());
         for (Organization.Period period : periods) {
-            if (period.getDescription() != null) {
-                dos.writeUTF(period.getDescription()); //description
-            } else {
-                dos.writeUTF("null");
-            }
+            dos.writeUTF(period.getDescription() != null ? period.getDescription() : "null");//description
             writeDate(dos, period.getStartDate()); //startDate
             writeDate(dos, period.getEndDate()); //endDate
             dos.writeUTF(period.getTitle()); //title
@@ -127,11 +115,7 @@ public class DataStreamSerializer implements SerializationStrategy {
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
             String description = dis.readUTF();
-            if (description.equals("null")) {
-                periods.add(new Organization.Period(readDate(dis), readDate(dis), dis.readUTF(), null));
-            } else {
-                periods.add(new Organization.Period(readDate(dis), readDate(dis), dis.readUTF(), description));
-            }
+            periods.add(new Organization.Period(readDate(dis), readDate(dis), dis.readUTF(), description.equals("null") ? null : description));
         }
         return periods;
     }
