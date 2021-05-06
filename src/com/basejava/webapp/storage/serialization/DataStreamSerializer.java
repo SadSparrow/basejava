@@ -6,9 +6,7 @@ import com.basejava.webapp.util.DateUtil;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataStreamSerializer implements SerializationStrategy {
 
@@ -18,23 +16,38 @@ public class DataStreamSerializer implements SerializationStrategy {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
             Map<ContactType, String> contacts = r.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue());
-            }
+
+            WriteCollection<ContactType, String> contactsInterface = (k, v) -> {
+                dos.writeUTF(k.name());
+                dos.writeUTF(v);
+            };
 
             Map<SectionType, AbstractContent> content = r.getContents();
-            dos.writeInt(content.size());
-            for (Map.Entry<SectionType, AbstractContent> entry : content.entrySet()) {
-                SectionType type = entry.getKey();
-                dos.writeUTF(type.name());
-                switch (entry.getKey()) {
-                    case OBJECTIVE, PERSONAL -> dos.writeUTF((((SimpleTextContent) r.getContent(type)).getSimpleText()));
-                    case ACHIEVEMENT, QUALIFICATIONS -> writeStringListContent(dos, ((StringListContent) r.getContent(type)).getStringList());
-                    case EXPERIENCE, EDUCATION -> writeOrganization(dos, ((OrganizationContent) r.getContent(type)).getOrganizations());
+            WriteCollection<SectionType, AbstractContent> contentInterface = (k, v) -> {
+                dos.writeUTF(k.name());
+                switch (k) {
+                    case OBJECTIVE, PERSONAL -> dos.writeUTF((((SimpleTextContent) r.getContent(k)).getSimpleText()));
+                    case ACHIEVEMENT, QUALIFICATIONS -> writeStringListContent(dos, ((StringListContent) r.getContent(k)).getStringList());
+                    case EXPERIENCE, EDUCATION -> writeOrganization(dos, ((OrganizationContent) r.getContent(k)).getOrganizations());
                 }
-            }
+            };
+            writeWithException(contacts, dos, contactsInterface);
+            writeWithException(content, dos, contentInterface);
+        }
+    }
+
+    //как записывать каждый отдельный элемент коллекции
+    @FunctionalInterface
+    private interface WriteCollection<K, V> {
+        void writeCollection(K k, V v) throws IOException;
+
+    }
+
+    //который как параметры принимает коллекцию (в буквальном смысле), DataOutputStream и твой функциональный интерфейс.
+    private <K, V> void writeWithException(Map<K, V> map, DataOutputStream dos, WriteCollection<K, V> myInterface) throws IOException {
+        dos.writeInt(map.size());
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            myInterface.writeCollection(entry.getKey(), entry.getValue());
         }
     }
 
@@ -82,7 +95,8 @@ public class DataStreamSerializer implements SerializationStrategy {
         dos.writeInt(orgs.size());
         for (Organization org : orgs) {
             Link link = org.getHomePage();
-            dos.writeUTF(link.getUrl() != null ? link.getUrl() : "null");
+            String url = link.getUrl();
+            dos.writeUTF(url != null ? url : "null");
             dos.writeUTF(link.getName());
             writePeriod(dos, org);
         }
@@ -103,7 +117,8 @@ public class DataStreamSerializer implements SerializationStrategy {
         List<Organization.Period> periods = org.getPeriod();
         dos.writeInt(periods.size());
         for (Organization.Period period : periods) {
-            dos.writeUTF(period.getDescription() != null ? period.getDescription() : "null");//description
+            String description = period.getDescription();
+            dos.writeUTF(description != null ? description : "null");
             writeDate(dos, period.getStartDate()); //startDate
             writeDate(dos, period.getEndDate()); //endDate
             dos.writeUTF(period.getTitle()); //title
