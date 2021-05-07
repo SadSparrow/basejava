@@ -18,30 +18,30 @@ public class DataStreamSerializer implements SerializationStrategy {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
             Map<ContactType, String> contacts = r.getContacts();
-            WriteMap<ContactType, String> contactsInterface = (k, v) -> {
+            MapWriter<ContactType, String> contactsInterface = (k, v) -> {
                 dos.writeUTF(k.name());
                 dos.writeUTF(v);
             };
 
             Map<SectionType, AbstractContent> content = r.getContents();
-            WriteMap<SectionType, AbstractContent> contentInterface = (k, v) -> {
+            MapWriter<SectionType, AbstractContent> contentInterface = (k, v) -> {
                 dos.writeUTF(k.name());
                 switch (k) {
                     case OBJECTIVE, PERSONAL -> dos.writeUTF((((SimpleTextContent) r.getContent(k)).getSimpleText()));
                     case ACHIEVEMENT, QUALIFICATIONS -> {
                         List<String> stringList = ((StringListContent) r.getContent(k)).getStringList();
-                        WriteList<String> stringListInterface = dos::writeUTF;
+                        ListWriter<String> stringListInterface = dos::writeUTF;
                         writeWithException(stringList, dos, stringListInterface);
                     }
                     case EXPERIENCE, EDUCATION -> {
                         List<Organization> orgList = ((OrganizationContent) r.getContent(k)).getOrganizations();
-                        WriteList<Organization> orgListInterface = t -> {
+                        ListWriter<Organization> orgListInterface = t -> {
                             Link link = t.getHomePage();
                             String url = link.getUrl();
                             dos.writeUTF(url != null ? url : "null");
                             dos.writeUTF(link.getName());
                             List<Organization.Period> periodsList = t.getPeriod();
-                            WriteList<Organization.Period> periodsListInterface = p -> {
+                            ListWriter<Organization.Period> periodsListInterface = p -> {
                                 String description = p.getDescription();
                                 dos.writeUTF(description != null ? description : "null");
                                 writeDate(dos, p.getStartDate()); //startDate
@@ -59,26 +59,24 @@ public class DataStreamSerializer implements SerializationStrategy {
         }
     }
 
-    //как записывать каждый отдельный элемент коллекции
     @FunctionalInterface
-    private interface WriteMap<K, V> {
+    private interface MapWriter<K, V> {
         void writeCollection(K k, V v) throws IOException;
     }
 
     @FunctionalInterface
-    private interface WriteList<T> {
+    private interface ListWriter<T> {
         void writeCollection(T t) throws IOException;
     }
 
-    //который как параметры принимает коллекцию (в буквальном смысле), DataOutputStream и твой функциональный интерфейс.
-    private <K, V> void writeWithException(Map<K, V> map, DataOutputStream dos, WriteMap<K, V> myInterface) throws IOException {
+    private <K, V> void writeWithException(Map<K, V> map, DataOutputStream dos, MapWriter<K, V> myInterface) throws IOException {
         dos.writeInt(map.size());
         for (Map.Entry<K, V> entry : map.entrySet()) {
             myInterface.writeCollection(entry.getKey(), entry.getValue());
         }
     }
 
-    private <T> void writeWithException(List<T> list, DataOutputStream dos, WriteList<T> myInterface) throws IOException {
+    private <T> void writeWithException(List<T> list, DataOutputStream dos, ListWriter<T> myInterface) throws IOException {
         dos.writeInt(list.size());
         for (T t : list) {
             myInterface.writeCollection(t);
@@ -92,22 +90,22 @@ public class DataStreamSerializer implements SerializationStrategy {
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
 
-            ReadMap contactsInterface = c -> resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF());
+            MapReader contactsInterface = c -> resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             readWithException(dis, contactsInterface);
 
-            ReadMap sectionInterface = s -> {
+            MapReader sectionInterface = s -> {
                 SectionType type = SectionType.valueOf(dis.readUTF());
                 switch (type) {
                     case OBJECTIVE, PERSONAL -> resume.setContent(type, new SimpleTextContent(dis.readUTF()));
                     case ACHIEVEMENT, QUALIFICATIONS -> {
-                        ReadList<String> stringListInterface = DataInput::readUTF;
+                        ListReader<String> stringListInterface = DataInput::readUTF;
                         resume.setContent(type, new StringListContent(readWithException(dis, stringListInterface)));
                     }
                     case EXPERIENCE, EDUCATION -> {
-                        ReadList<Organization> orgListInterface = o -> {
+                        ListReader<Organization> orgListInterface = o -> {
                             String url = dis.readUTF();
                             Link homePage = new Link(dis.readUTF(), url.equals("null") ? null : url);
-                            ReadList<Organization.Period> periodsListInterface = p -> {
+                            ListReader<Organization.Period> periodsListInterface = p -> {
                                 String description = dis.readUTF();
                                 return new Organization.Period(readDate(dis), readDate(dis), dis.readUTF(), description.equals("null") ? null : description);
                             };
@@ -123,25 +121,25 @@ public class DataStreamSerializer implements SerializationStrategy {
     }
 
     @FunctionalInterface
-    private interface ReadMap {
+    private interface MapReader {
         void readCollection(DataInputStream dis) throws IOException;
     }
 
     @FunctionalInterface
-    private interface ReadList<T> {
+    private interface ListReader<T> {
         T readCollection(DataInputStream dis) throws IOException;
     }
 
-    private <T> List<T> readWithException(DataInputStream dis, ReadList<T> myInterface) throws IOException {
+    private <T> List<T> readWithException(DataInputStream dis, ListReader<T> myInterface) throws IOException {
         int size = dis.readInt();
         List<T> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            list.add(myInterface.readCollection(dis)); // это верно?
+            list.add(myInterface.readCollection(dis));
         }
         return list;
     }
 
-    private void readWithException(DataInputStream dis, ReadMap myInterface) throws IOException {
+    private void readWithException(DataInputStream dis, MapReader myInterface) throws IOException {
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
             myInterface.readCollection(dis);
