@@ -102,10 +102,21 @@ public class DataStreamSerializer implements SerializationStrategy {
                 switch (type) {
                     case OBJECTIVE, PERSONAL -> resume.setContent(type, new SimpleTextContent(dis.readUTF()));
                     case ACHIEVEMENT, QUALIFICATIONS -> {
-                        ReadList<String> strings = DataInput::readUTF;
-                        resume.setContent(type, new StringListContent(readWithException(dis, strings)));
+                        ReadList<String> stringListInterface = DataInput::readUTF;
+                        resume.setContent(type, new StringListContent(readWithException(dis, stringListInterface)));
                     }
-                    case EXPERIENCE, EDUCATION -> resume.setContent(type, new OrganizationContent(readOrganization(dis)));
+                    case EXPERIENCE, EDUCATION -> {
+                        ReadList<Organization> orgListInterface = o -> {
+                            String url = dis.readUTF();
+                            Link homePage = new Link(dis.readUTF(), url.equals("null") ? null : url);
+                            ReadList<Organization.Period> periodsListInterface = p -> {
+                                String description = dis.readUTF();
+                                return new Organization.Period(readDate(dis), readDate(dis), dis.readUTF(), description.equals("null") ? null : description);
+                            };
+                            return new Organization(homePage, readWithException(dis, periodsListInterface));
+                        };
+                        resume.setContent(type, new OrganizationContent(readWithException(dis, orgListInterface)));
+                    }
                 }
             }
             return resume;
@@ -117,34 +128,13 @@ public class DataStreamSerializer implements SerializationStrategy {
         T readCollection(DataInputStream dis) throws IOException;
     }
 
-    private <T> List<T>  readWithException(DataInputStream dis, ReadList<T> myInterface) throws IOException {
+    private <T> List<T> readWithException(DataInputStream dis, ReadList<T> myInterface) throws IOException {
         int size = dis.readInt();
         List<T> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             list.add(myInterface.readCollection(dis)); // это верно?
         }
         return list;
-    }
-
-    private List<Organization> readOrganization(DataInputStream dis) throws IOException {
-        List<Organization> orgs = new ArrayList<>();
-        int size = dis.readInt();
-        for (int i = 0; i < size; i++) {
-            String url = dis.readUTF();
-            Link homePage = new Link(dis.readUTF(), url.equals("null") ? null : url);
-            orgs.add(new Organization(homePage, readPeriod(dis)));
-        }
-        return orgs;
-    }
-
-    private List<Organization.Period> readPeriod(DataInputStream dis) throws IOException {
-        List<Organization.Period> periods = new ArrayList<>();
-        int size = dis.readInt();
-        for (int i = 0; i < size; i++) {
-            String description = dis.readUTF();
-            periods.add(new Organization.Period(readDate(dis), readDate(dis), dis.readUTF(), description.equals("null") ? null : description));
-        }
-        return periods;
     }
 
     private void writeDate(DataOutputStream dos, LocalDate date) throws IOException {
