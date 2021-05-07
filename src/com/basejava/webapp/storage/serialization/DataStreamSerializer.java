@@ -91,13 +91,11 @@ public class DataStreamSerializer implements SerializationStrategy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int contactsSize = dis.readInt();
-            for (int i = 0; i < contactsSize; i++) {
-                resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
 
-            int sectionsSize = dis.readInt();
-            for (int i = 0; i < sectionsSize; i++) {
+            ReadMap contactsInterface = c -> resume.setContacts(ContactType.valueOf(dis.readUTF()), dis.readUTF());
+            readWithException(dis, contactsInterface);
+
+            ReadMap sectionInterface = s -> {
                 SectionType type = SectionType.valueOf(dis.readUTF());
                 switch (type) {
                     case OBJECTIVE, PERSONAL -> resume.setContent(type, new SimpleTextContent(dis.readUTF()));
@@ -118,9 +116,15 @@ public class DataStreamSerializer implements SerializationStrategy {
                         resume.setContent(type, new OrganizationContent(readWithException(dis, orgListInterface)));
                     }
                 }
-            }
+            };
+            readWithException(dis, sectionInterface);
             return resume;
         }
+    }
+
+    @FunctionalInterface
+    private interface ReadMap {
+        void readCollection(DataInputStream dis) throws IOException;
     }
 
     @FunctionalInterface
@@ -135,6 +139,13 @@ public class DataStreamSerializer implements SerializationStrategy {
             list.add(myInterface.readCollection(dis)); // это верно?
         }
         return list;
+    }
+
+    private void readWithException(DataInputStream dis, ReadMap myInterface) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            myInterface.readCollection(dis);
+        }
     }
 
     private void writeDate(DataOutputStream dos, LocalDate date) throws IOException {
