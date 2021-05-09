@@ -1,0 +1,43 @@
+package com.basejava.webapp;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class MainStreams {
+    public static void main(String[] args) {
+        int[] ints = {3, 1, 2, 3, 3, 2, 3, 8};
+        int[] i = {9, 8, 5, 6, 2};
+        System.out.println(minValue(ints));
+        System.out.println(minValue(i));
+
+        List<Integer> list1 = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        List<Integer> list2 = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 11);
+
+        System.out.println(oddOrEven(list1));
+        System.out.println(oddOrEven(list2));
+    }
+
+    private static int minValue(int[] values) {
+        //return Arrays.stream(values).distinct().sorted().reduce((x, y) -> Integer.parseInt(x + "" + y)).orElse(-1);
+        int[] ints = Arrays.stream(values).distinct().sorted().toArray();
+        return Arrays.stream(ints).reduce(0, (a, b) -> {
+            int sum = 0;
+            for (int i = 0; i < ints.length; i++) {
+                sum += ints[i] * getValue(ints.length - i);
+            }
+            return sum;
+        });
+    }
+
+    private static int getValue(int value) {
+        int[] arr = {-1, 1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000};
+        return arr[value];
+    }
+
+    private static List<Integer> oddOrEven(List<Integer> integers) {
+        return integers.stream().reduce(0, Integer::sum) % 2 == 0 ?
+                (integers.stream().filter(p -> p % 2 != 0).collect(Collectors.toList())) :
+                (integers.stream().filter(p -> p % 2 == 0).collect(Collectors.toList()));
+    }
+}
