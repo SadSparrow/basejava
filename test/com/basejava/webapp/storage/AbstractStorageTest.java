@@ -1,5 +1,6 @@
 package com.basejava.webapp.storage;
 
+import com.basejava.webapp.Config;
 import com.basejava.webapp.exception.ExistStorageException;
 import com.basejava.webapp.exception.NotExistStorageException;
 import com.basejava.webapp.model.Resume;
@@ -11,10 +12,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.basejava.webapp.ResumeTestData.createResume;
-
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("C:/Users/Ulmon/Desktop/project/forResume");
+    protected static final File STORAGE_DIR = Config.get().getStorageDir();
     protected final Storage storage;
     protected static final String UUID_1 = "uuid1";
     protected static final String UUID_2 = "uuid2";
@@ -22,10 +21,14 @@ public abstract class AbstractStorageTest {
     protected static final String UUID_4 = "uuid4";
     protected static final String UUID_5 = "uuid5";
 
-    private static final Resume R1 = createResume(UUID_1, "C");
-    private static final Resume R2 = createResume(UUID_2, "Bb");
-    private static final Resume R3 = createResume(UUID_3, "Ba");
-    private static final Resume R4 = createResume(UUID_4, "A");
+//    private static final Resume R1 = createResume(UUID_1, "C");
+//    private static final Resume R2 = createResume(UUID_2, "Bb");
+//    private static final Resume R3 = createResume(UUID_3, "Ba");
+//    private static final Resume R4 = createResume(UUID_4, "A");
+    private static final Resume R1 = new Resume(UUID_1, "C");
+    private static final Resume R2 = new Resume(UUID_2, "Bb");
+    private static final Resume R3 = new Resume(UUID_3, "Ba");
+    private static final Resume R4 = new Resume(UUID_4, "A");
 
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -48,19 +51,22 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume r = createResume(UUID_4, "new A");
+//        Resume r = createResume(UUID_4, "new A");
+        Resume r = new Resume(UUID_4, "new A");
         storage.update(r);
     }
 
     @Test(expected = NotExistStorageException.class)
     public void updateWrong() {
-        Resume r = createResume(UUID_5, "Dd");
+//        Resume r = createResume(UUID_5, "Dd");
+        Resume r = new Resume(UUID_5, "Dd");
         storage.update(r);
     }
 
     @Test
     public void save() {
-        storage.save(createResume(UUID_5, "Dd"));
+//        storage.save(createResume(UUID_5, "Dd"));
+        storage.save(new Resume(UUID_5, "Dd"));
         Assert.assertEquals(5, storage.size());
         storage.get(UUID_5);
     }
