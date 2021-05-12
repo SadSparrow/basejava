@@ -21,16 +21,13 @@ public class MainStreams {
     }
 
     private static int minValue(int[] values) {
-        //return Arrays.stream(values).distinct().sorted().reduce((x, y) -> Integer.parseInt(x + "" + y)).orElse(-1);
-        return Arrays.stream(values).distinct().sorted().reduce((x, y) -> x * 10 + y).orElse(-1);
+//        return Arrays.stream(values).distinct().sorted().reduce(0, (x, y) -> Integer.parseInt(x + "" + y));
+        return Arrays.stream(values).distinct().sorted().reduce(0, (x, y) -> x * 10 + y);
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
         Predicate<Integer> even = i -> i % 2 == 0;
         Map<Boolean, List<Integer>> evenAndOdds = integers.stream().collect(Collectors.partitioningBy(even));
-        List<Integer> oddList = evenAndOdds.get(true);
-        List<Integer> evenList = evenAndOdds.get(false);
-        int sum = integers.stream().reduce(0, Integer::sum);
-        return even.test(sum) ? evenList: oddList;
+        return even.test(integers.stream().reduce(0, Integer::sum)) ? evenAndOdds.get(false) : evenAndOdds.get(true);
     }
 }
