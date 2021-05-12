@@ -2,6 +2,8 @@ package com.basejava.webapp;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class MainStreams {
@@ -20,13 +22,15 @@ public class MainStreams {
 
     private static int minValue(int[] values) {
         //return Arrays.stream(values).distinct().sorted().reduce((x, y) -> Integer.parseInt(x + "" + y)).orElse(-1);
-        return Arrays.stream(values).distinct().sorted().reduce((x, y) -> (x * 10) + y).orElse(-1);
+        return Arrays.stream(values).distinct().sorted().reduce((x, y) -> x * 10 + y).orElse(-1);
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
-
-        return integers.stream().reduce(0, Integer::sum) % 2 == 0 ?
-                (integers.stream().filter(p -> p % 2 != 0).collect(Collectors.toList())) :
-                (integers.stream().filter(p -> p % 2 == 0).collect(Collectors.toList()));
+        Predicate<Integer> even = i -> i % 2 == 0;
+        Map<Boolean, List<Integer>> evenAndOdds = integers.stream().collect(Collectors.partitioningBy(even));
+        List<Integer> oddList = evenAndOdds.get(true);
+        List<Integer> evenList = evenAndOdds.get(false);
+        int sum = integers.stream().reduce(0, Integer::sum);
+        return even.test(sum) ? evenList: oddList;
     }
 }
