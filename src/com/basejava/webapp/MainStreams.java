@@ -20,22 +20,11 @@ public class MainStreams {
 
     private static int minValue(int[] values) {
         //return Arrays.stream(values).distinct().sorted().reduce((x, y) -> Integer.parseInt(x + "" + y)).orElse(-1);
-        int[] ints = Arrays.stream(values).distinct().sorted().toArray();
-        return Arrays.stream(ints).reduce(0, (a, b) -> {
-            int sum = 0;
-            for (int i = 0; i < ints.length; i++) {
-                sum += ints[i] * getValue(ints.length - i);
-            }
-            return sum;
-        });
-    }
-
-    private static int getValue(int value) {
-        int[] arr = {-1, 1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000};
-        return arr[value];
+        return Arrays.stream(values).distinct().sorted().reduce((x, y) -> (x * 10) + y).orElse(-1);
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
+
         return integers.stream().reduce(0, Integer::sum) % 2 == 0 ?
                 (integers.stream().filter(p -> p % 2 != 0).collect(Collectors.toList())) :
                 (integers.stream().filter(p -> p % 2 == 0).collect(Collectors.toList()));

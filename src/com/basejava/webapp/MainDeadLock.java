@@ -8,29 +8,29 @@ public class MainDeadLock {
     public static void main(String[] args) throws InterruptedException {
         Thread threadFirst = new Thread(() -> {
             synchronized (Lock1) {
-                System.out.println(Thread.currentThread().getName() + " has captured the object " + Lock1);
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                synchronized (Lock2) {
-                    System.out.println(Thread.currentThread().getName() + " has captured the object " + Lock2);
-                    System.out.println(Thread.currentThread().getName() + ", " + Thread.currentThread().getState());
-                }
+                System.out.println(Thread.currentThread().getName() + " stream is trying to capture " + Lock2);
+                print(Lock2);
             }
         });
         Thread threadSecond = new Thread(() -> {
             synchronized (Lock2) {
-                System.out.println(Thread.currentThread().getName() + " has captured the object " + Lock2);
-                synchronized (Lock1) {
-                    System.out.println(Thread.currentThread().getName() + " has captured the object " + Lock1);
-                    System.out.println(Thread.currentThread().getName() + ", " + Thread.currentThread().getState());
-                }
+                System.out.println(Thread.currentThread().getName() + " stream is trying to capture " + Lock1);
+                print(Lock1);
             }
         });
 
         threadFirst.start();
         threadSecond.start();
+    }
+
+    private static void print(Integer i) {
+        synchronized (i) {
+            System.out.println(Thread.currentThread().getName() + " has captured the object " + i + " (method print)");
+        }
     }
 }
