@@ -3,7 +3,6 @@ package com.basejava.webapp;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class MainStreams {
@@ -26,8 +25,7 @@ public class MainStreams {
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
-        Predicate<Integer> even = i -> i % 2 == 0;
-        Map<Boolean, List<Integer>> evenAndOdds = integers.stream().collect(Collectors.partitioningBy(even));
-        return even.test(integers.stream().reduce(0, Integer::sum)) ? evenAndOdds.get(false) : evenAndOdds.get(true);
+        Map<Boolean, List<Integer>> result = integers.stream().collect(Collectors.groupingBy(x -> x % 2 == 0));
+        return result.get(result.get(false).size() % 2 != 0);
     }
 }
