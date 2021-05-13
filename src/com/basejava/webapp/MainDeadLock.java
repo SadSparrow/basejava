@@ -9,7 +9,7 @@ public class MainDeadLock {
         new Thread(() -> print(Lock2, Lock1)).start();
         new Thread(() -> print(Lock1, Lock2)).start();
     }
-    
+
     private static void print(Integer a, Integer b) {
         System.out.println(Thread.currentThread().getName() + " thread is trying to capture " + a);
         synchronized (a) {

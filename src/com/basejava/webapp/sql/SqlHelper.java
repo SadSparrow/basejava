@@ -13,17 +13,17 @@ public class SqlHelper {
         this.connectionFactory = connectionFactory;
     }
 
-    public void execute(String sql, ABlockOfCode aBlockOfCode) {
+    public <T> T execute(String sql, ABlockOfCode<T> aBlockOfCode) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            aBlockOfCode.execute(ps);
+            return aBlockOfCode.execute(ps);
         } catch (SQLException e) {
             throw new StorageException(e);
         }
     }
 
     @FunctionalInterface
-    public interface ABlockOfCode {
-        void execute(PreparedStatement ps) throws SQLException;
+    public interface ABlockOfCode<T> {
+        T execute(PreparedStatement ps) throws SQLException;
     }
 }
