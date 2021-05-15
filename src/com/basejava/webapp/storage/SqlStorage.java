@@ -30,10 +30,7 @@ public class SqlStorage implements Storage {
         sqlHelper.execute("UPDATE resume SET full_name=? WHERE uuid =?", (ps) -> {
             ps.setString(1, r.getFullName());
             ps.setString(2, r.getUuid());
-            if (ps.executeUpdate() == 0) {
-                LOG.warning("Resume " + r.getUuid() + " not exist");
-                throw new NotExistStorageException(r.getUuid());
-            }
+            checkUpdate(ps.executeUpdate(), r.getUuid());
             LOG.info("Update (" + r.getUuid() + ") successfully");
             return null;
         });
@@ -53,7 +50,6 @@ public class SqlStorage implements Storage {
     @Override
     public Resume get(String uuid) {
         LOG.info("Get " + uuid);
-
         return sqlHelper.execute("SELECT * FROM resume r WHERE r.uuid =?", (ps) -> {
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
@@ -70,10 +66,7 @@ public class SqlStorage implements Storage {
         LOG.info("Delete " + uuid);
         sqlHelper.execute("DELETE FROM resume WHERE uuid =?", (ps) -> {
             ps.setString(1, uuid);
-            if (ps.executeUpdate() == 0) {
-                LOG.warning("Resume " + uuid + " not exist");
-                throw new NotExistStorageException(uuid);
-            }
+            checkUpdate(ps.executeUpdate(), uuid);
             return null;
         });
     }
@@ -99,5 +92,12 @@ public class SqlStorage implements Storage {
             rs.next();
             return rs.getInt("count");
         });
+    }
+
+    private void checkUpdate(int i, String uuid) {
+        if (i == 0) {
+            LOG.warning("Resume " + uuid + " not exist");
+            throw new NotExistStorageException(uuid);
+        }
     }
 }
