@@ -1,10 +1,8 @@
 package com.basejava.webapp;
 
-import com.basejava.webapp.model.*;
-
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
+import com.basejava.webapp.model.ContactType;
+import com.basejava.webapp.model.Resume;
+import com.basejava.webapp.model.SectionType;
 
 public class ResumeTestData {
     public static void main(String[] args) {
@@ -23,7 +21,7 @@ public class ResumeTestData {
         r.setContacts(ContactType.PHONE, "+7(921) 855-0482");
         r.setContacts(ContactType.SKYPE, "grigory.kislin");
         r.setContacts(ContactType.MAIl, "gkislin@yandex.ru");
-
+        /*
         r.setContent(SectionType.OBJECTIVE, new SimpleTextContent("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         r.setContent(SectionType.PERSONAL, new SimpleTextContent("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
 
@@ -74,7 +72,7 @@ public class ResumeTestData {
         spb.addPeriod(1987, Month.of(7), 1993, Month.of(7), "Инженер (программист Fortran, C)", null);
         education.add(spb);
         education.add(new Organization("Заочная физико-техническая школа при МФТИ", "http://www.school.mipt.ru/", 1984, Month.of(9), 1987, Month.of(6), "Закончил с отличием", null));
-        r.setContent(SectionType.EDUCATION, new OrganizationContent(education));
+        r.setContent(SectionType.EDUCATION, new OrganizationContent(education));*/
         return r;
     }
 }

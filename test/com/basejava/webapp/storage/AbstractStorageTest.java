@@ -3,6 +3,7 @@ package com.basejava.webapp.storage;
 import com.basejava.webapp.Config;
 import com.basejava.webapp.exception.ExistStorageException;
 import com.basejava.webapp.exception.NotExistStorageException;
+import com.basejava.webapp.model.ContactType;
 import com.basejava.webapp.model.Resume;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static com.basejava.webapp.ResumeTestData.createResume;
+
 public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = Config.get().getStorageDir();
     protected final Storage storage;
@@ -22,14 +25,10 @@ public abstract class AbstractStorageTest {
     protected static final String UUID_4 = UUID.randomUUID().toString();
     protected static final String UUID_5 = UUID.randomUUID().toString();
 
-//    private static final Resume R1 = createResume(UUID_1, "C");
-//    private static final Resume R2 = createResume(UUID_2, "Bb");
-//    private static final Resume R3 = createResume(UUID_3, "Ba");
-//    private static final Resume R4 = createResume(UUID_4, "A");
-    private static final Resume R1 = new Resume(UUID_1, "C");
-    private static final Resume R2 = new Resume(UUID_2, "Bb");
-    private static final Resume R3 = new Resume(UUID_3, "Ba");
-    private static final Resume R4 = new Resume(UUID_4, "A");
+    private static final Resume R1 = createResume(UUID_1, "C");
+    private static final Resume R2 = createResume(UUID_2, "Bb");
+    private static final Resume R3 = createResume(UUID_3, "Ba");
+    private static final Resume R4 = createResume(UUID_4, "A");
 
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -52,22 +51,23 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-//        Resume r = createResume(UUID_4, "new A");
         Resume r = new Resume(UUID_4, "new A");
+        r.setContacts(ContactType.PHONE, "+7(999)9992211");
+        r.setContacts(ContactType.SKYPE, "new skype");
+        r.setContacts(ContactType.MAIl, "mail@mail.ru");
         storage.update(r);
+        Assert.assertEquals(r, storage.get(UUID_4));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void updateWrong() {
-//        Resume r = createResume(UUID_5, "Dd");
-        Resume r = new Resume(UUID_5, "Dd");
+        Resume r = createResume(UUID_5, "Dd");
         storage.update(r);
     }
 
     @Test
     public void save() {
-//        storage.save(createResume(UUID_5, "Dd"));
-        storage.save(new Resume(UUID_5, "Dd"));
+        storage.save(createResume(UUID_5, "Dd"));
         Assert.assertEquals(5, storage.size());
         storage.get(UUID_5);
     }
