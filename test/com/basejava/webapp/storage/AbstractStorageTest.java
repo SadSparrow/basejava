@@ -25,7 +25,8 @@ public abstract class AbstractStorageTest {
     protected static final String UUID_4 = UUID.randomUUID().toString();
     protected static final String UUID_5 = UUID.randomUUID().toString();
 
-    private static final Resume R1 = createResume(UUID_1, "C");
+    //private static final Resume R1 = createResume(UUID_1, "C");
+    private static final Resume R1 = new Resume(UUID_1, "C");
     private static final Resume R2 = createResume(UUID_2, "Bb");
     private static final Resume R3 = createResume(UUID_3, "Ba");
     private static final Resume R4 = createResume(UUID_4, "A");
@@ -51,12 +52,12 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume r = new Resume(UUID_4, "new A");
+        Resume r = new Resume(UUID_1, "new C");
         r.setContacts(ContactType.PHONE, "+7(999)9992211");
         r.setContacts(ContactType.SKYPE, "new skype");
         r.setContacts(ContactType.MAIl, "mail@mail.ru");
         storage.update(r);
-        Assert.assertEquals(r, storage.get(UUID_4));
+        Assert.assertEquals(r, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
