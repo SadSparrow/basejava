@@ -1,8 +1,9 @@
 package com.basejava.webapp;
 
-import com.basejava.webapp.model.ContactType;
-import com.basejava.webapp.model.Resume;
-import com.basejava.webapp.model.SectionType;
+import com.basejava.webapp.model.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResumeTestData {
     public static void main(String[] args) {
@@ -21,7 +22,7 @@ public class ResumeTestData {
         r.setContacts(ContactType.PHONE, "+7(921) 855-0482");
         r.setContacts(ContactType.SKYPE, "grigory.kislin");
         r.setContacts(ContactType.MAIl, "gkislin@yandex.ru");
-        /*
+
         r.setContent(SectionType.OBJECTIVE, new SimpleTextContent("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         r.setContent(SectionType.PERSONAL, new SimpleTextContent("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
 
@@ -51,7 +52,7 @@ public class ResumeTestData {
         listQualifications.add("Отличное знание и опыт применения концепций ООП, SOA, шаблонов проектрирования, архитектурных шаблонов, UML, функционального программирования");
         listQualifications.add("Родной русский, английский \"upper intermediate\"");
         r.setContent(SectionType.QUALIFICATIONS, new StringListContent(listQualifications));
-
+        /*
         List<Organization> organizations = new ArrayList<>();
         organizations.add(new Organization("Java Online Projects", "https://javaops.ru/", 2013, Month.of(10), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
         organizations.add(new Organization("Wrike", "https://www.wrike.com/vj/", 2014, Month.of(10), 2016, Month.of(1), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."));
