@@ -25,14 +25,15 @@ public class SqlStorage implements Storage {
     @Override
     public void update(Resume resume) {
         sqlHelper.<Void>transactionalExecute(conn -> {
+            String uuid = resume.getUuid();
                     try (PreparedStatement ps = conn.prepareStatement("UPDATE resume SET full_name=? WHERE uuid =?")) {
-                        String uuid = resume.getUuid();
+
                         ps.setString(1, resume.getFullName());
                         ps.setString(2, uuid);
                         checkUpdate(ps.executeUpdate(), uuid);
-                        deleteContacts(uuid, conn);
-                        deleteContents(uuid, conn);
                     }
+                    deleteContacts(uuid, conn);
+                    deleteContents(uuid, conn);
                     addContacts(resume, conn);
                     addContents(resume, conn);
                     LOG.info("Update (" + resume.getUuid() + ") successfully");
@@ -80,7 +81,7 @@ public class SqlStorage implements Storage {
             }
             try (PreparedStatement ps = conn.prepareStatement("" +
                     "    SELECT * FROM resume r " +
-                    " LEFT JOIN content c " +
+                    " LEFT JOIN section c " +
                     "        ON r.uuid = c.resume_uuid " +
                     "     WHERE r.uuid =? ")) {
                 ps.setString(1, uuid);
@@ -122,7 +123,7 @@ public class SqlStorage implements Storage {
                             addContact(rs, map.get(uuid));
                         }
                     }
-                    try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM content c ORDER BY resume_uuid")) {
+                    try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM section c ORDER BY resume_uuid")) {
                         ResultSet rs = ps.executeQuery();
                         while (rs.next()) {
                             String uuid = rs.getString("resume_uuid");
@@ -179,7 +180,7 @@ public class SqlStorage implements Storage {
     }
 
     private void deleteContents(String uuid, Connection conn) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement("DELETE FROM content WHERE resume_uuid=?")) {
+        try (PreparedStatement ps = conn.prepareStatement("DELETE FROM section WHERE resume_uuid=?")) {
             ps.setString(1, uuid);
             ps.executeUpdate();
         }
@@ -198,20 +199,16 @@ public class SqlStorage implements Storage {
     }
 
     private void addContents(Resume resume, Connection conn) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement("INSERT INTO content (resume_uuid, type, value) VALUES (?,?,?)")) {
+        try (PreparedStatement ps = conn.prepareStatement("INSERT INTO section (resume_uuid, type, value) VALUES (?,?,?)")) {
             for (Map.Entry<SectionType, AbstractContent> e : resume.getContents().entrySet()) {
-                SectionType type = SectionType.valueOf(e.getKey().name());
+                SectionType type = e.getKey();
                 ps.setString(1, resume.getUuid());
                 ps.setString(2, type.name());
                 switch (type) {
                     case OBJECTIVE, PERSONAL -> ps.setString(3, (((SimpleTextContent) resume.getContent(type)).getSimpleText()));
                     case ACHIEVEMENT, QUALIFICATIONS -> {
                         List<String> stringList = ((StringListContent) resume.getContent(type)).getStringList();
-                        StringBuilder sb = new StringBuilder();
-                        for (String s : stringList) {
-                            sb.append(s).append("\n");
-                        }
-                        ps.setString(3, sb.toString());
+                        ps.setString(3, String.join("\n", stringList));
                     }
                 }
                 ps.addBatch();
