@@ -1,5 +1,6 @@
-package com.basejava.webapp;
+package com.basejava.webapp.web;
 
+import com.basejava.webapp.Config;
 import com.basejava.webapp.model.Resume;
 import com.basejava.webapp.storage.SqlStorage;
 
@@ -13,7 +14,12 @@ import java.util.List;
 
 @WebServlet("/resume")
 public class ResumeServlet extends HttpServlet {
-    private final SqlStorage sqlStorage = Config.get().getStorage();
+    private SqlStorage sqlStorage;
+
+    @Override
+    public void init() {
+        sqlStorage = Config.get().getStorage();
+    }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
@@ -21,7 +27,6 @@ public class ResumeServlet extends HttpServlet {
     }
 
     private void printResume(HttpServletResponse response) throws IOException {
-        List<Resume> list = sqlStorage.getAllSorted();
         PrintWriter writer = response.getWriter();
 
         writer.println("<table width=\"35%\" border=\"1\">" +
@@ -30,6 +35,7 @@ public class ResumeServlet extends HttpServlet {
                 "<th>Full Name</th>" +
                 "</tr>");
 
+        List<Resume> list = sqlStorage.getAllSorted();
         for (Resume r : list) {
             writer.println("<tr>");
             writer.println("<td>" + r.getUuid() + "</td>");
