@@ -23,11 +23,38 @@
             <jsp:useBean id="sectionEntry"
                          type="java.util.Map.Entry<com.basejava.webapp.model.SectionType, com.basejava.webapp.model.AbstractContent>"/>
                 <tr>
-                    <td valign="middle"><h3><%=sectionEntry.getKey().getTitle()%></h3></td>
+                    <td valign="middle"><h3><c:out value="${sectionEntry.getKey().getTitle()}"/></h3></td>
                 </tr>
-                <tr>
-                    <td><%=sectionEntry.getValue()%></td>
-                </tr>
+                    <c:choose>
+                    <c:when test="${sectionEntry.getKey().name().equals('OBJECTIVE') || sectionEntry.getKey().name().equals('PERSONAL')}">
+                        <tr><td><c:out value="${sectionEntry.getValue()}"/></td></tr>
+                    </c:when>
+                    <c:when test="${sectionEntry.getKey().name().equals('ACHIEVEMENT') || sectionEntry.getKey().name().equals('QUALIFICATIONS')}">
+                        <c:set var="simpleTextContent" value="${resume.getContent(sectionEntry.getKey())}"/> 
+                        <c:forEach var="stringList" items="${simpleTextContent.getStringList()}">
+                            <tr><td><li><c:out value="${stringList}"/></li></td></tr>
+                        </c:forEach>
+                    </c:when>
+                    <c:when test="${sectionEntry.getKey().name().equals('EXPERIENCE') || sectionEntry.getKey().name().equals('EDUCATION')}">
+                        <c:set var="organizationContent" value="${resume.getContent(sectionEntry.getKey())}"/>
+                        <c:forEach var="orgList" items="${organizationContent.getOrganizations()}">
+                            <c:set var="homePage" value="${orgList.getHomePage()}"/>
+                                <tr><td><a href="${homePage.getUrl()}"><c:out value="${homePage.getName()}"/></a></td>
+                                <td><c:out value="${period}"/></td></tr>
+                                <c:forEach var="period" items="${orgList.getPeriod()}">
+                                    <tr><td>
+                                        <c:out value="${period.getStartDate().getMonthValue()}"/>/<c:out value="${period.getStartDate().getYear()}"/> - 
+                                        <c:out value="${period.getEndDate().getMonthValue()}"/>/<c:out value="${period.getEndDate().getYear()}"/>
+                                    </td></tr>
+                                    <tr><td><b><c:out value="${period.getTitle()}"/></b></td></tr>
+                                    <tr><td><c:out value="${period.getDescription()}"/></td></tr>
+                                </c:forEach>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <p>Undefined</p>
+                    </c:otherwise>
+                    </c:choose>
         </c:forEach>
     </table>
 </section>
