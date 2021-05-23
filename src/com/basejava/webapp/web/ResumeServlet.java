@@ -1,47 +1,73 @@
 package com.basejava.webapp.web;
 
 import com.basejava.webapp.Config;
+import com.basejava.webapp.model.ContactType;
 import com.basejava.webapp.model.Resume;
 import com.basejava.webapp.storage.SqlStorage;
 
-import javax.servlet.annotation.WebServlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
+import java.util.UUID;
 
-@WebServlet("/resume")
+//@WebServlet("/resume")
 public class ResumeServlet extends HttpServlet {
     private SqlStorage sqlStorage;
 
     @Override
-    public void init() {
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
         sqlStorage = Config.get().getStorage();
     }
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html");
-        printResume(response);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.setCharacterEncoding("UTF-8");
+        String uuid = request.getParameter("uuid");
+        String fullName = request.getParameter("fullName");
+        Resume r = sqlStorage.get(uuid);
+        r.setFullName(fullName);
+        for (ContactType type : ContactType.values()) {
+            String value = request.getParameter(type.name());
+            if (value != null && value.trim().length() != 0) {
+                r.setContacts(type, value);
+            } else {
+                r.getContacts().remove(type);
+            }
+        }
+        sqlStorage.update(r);
+        response.sendRedirect("resume");
     }
 
-    private void printResume(HttpServletResponse response) throws IOException {
-        PrintWriter writer = response.getWriter();
-
-        writer.println("<table width=\"35%\" border=\"1\">" +
-                "<tr>" +
-                "<th>UUID</th>" +
-                "<th>Full Name</th>" +
-                "</tr>");
-
-        List<Resume> list = sqlStorage.getAllSorted();
-        for (Resume r : list) {
-            writer.println("<tr>");
-            writer.println("<td>" + r.getUuid() + "</td>");
-            writer.println("<td>" + r.getFullName() + "</td>");
-            writer.println("</tr>");
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String uuid = request.getParameter("uuid");
+        String action = request.getParameter("action");
+        if (action == null) {
+            request.setAttribute("resumes", sqlStorage.getAllSorted());
+            request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
+            return;
         }
-        writer.println("</table>");
+        Resume r;
+        switch (action) {
+            case "delete" -> {
+                sqlStorage.delete(uuid);
+                response.sendRedirect("resume");
+                return;
+            }
+            case "view", "edit" -> r = sqlStorage.get(uuid);
+            case "new" -> {
+                r = new Resume(UUID.randomUUID().toString(), "");
+                sqlStorage.save(r);
+            }
+
+            default -> throw new IllegalArgumentException("Action " + action + " is illegal");
+        }
+        request.setAttribute("resume", r);
+
+        request.getRequestDispatcher(
+                (action.equals("edit") || action.equals("new") ? "/WEB-INF/jsp/edit.jsp" : "/WEB-INF/jsp/view.jsp")
+        ).forward(request, response);
     }
 }

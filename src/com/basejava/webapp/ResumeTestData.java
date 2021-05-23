@@ -2,6 +2,7 @@ package com.basejava.webapp;
 
 import com.basejava.webapp.model.*;
 
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class ResumeTestData {
         Resume r = new Resume(uuid, fullname);
         r.setContacts(ContactType.PHONE, "+7(921) 855-0482");
         r.setContacts(ContactType.SKYPE, "grigory.kislin");
-        r.setContacts(ContactType.MAIl, "gkislin@yandex.ru");
+        r.setContacts(ContactType.MAIL, "gkislin@yandex.ru");
 
         r.setContent(SectionType.OBJECTIVE, new SimpleTextContent("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         r.setContent(SectionType.PERSONAL, new SimpleTextContent("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
@@ -52,7 +53,7 @@ public class ResumeTestData {
         listQualifications.add("Отличное знание и опыт применения концепций ООП, SOA, шаблонов проектрирования, архитектурных шаблонов, UML, функционального программирования");
         listQualifications.add("Родной русский, английский \"upper intermediate\"");
         r.setContent(SectionType.QUALIFICATIONS, new StringListContent(listQualifications));
-        /*
+
         List<Organization> organizations = new ArrayList<>();
         organizations.add(new Organization("Java Online Projects", "https://javaops.ru/", 2013, Month.of(10), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
         organizations.add(new Organization("Wrike", "https://www.wrike.com/vj/", 2014, Month.of(10), 2016, Month.of(1), "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."));
@@ -73,7 +74,7 @@ public class ResumeTestData {
         spb.addPeriod(1987, Month.of(7), 1993, Month.of(7), "Инженер (программист Fortran, C)", null);
         education.add(spb);
         education.add(new Organization("Заочная физико-техническая школа при МФТИ", "http://www.school.mipt.ru/", 1984, Month.of(9), 1987, Month.of(6), "Закончил с отличием", null));
-        r.setContent(SectionType.EDUCATION, new OrganizationContent(education));*/
+        r.setContent(SectionType.EDUCATION, new OrganizationContent(education));
         return r;
     }
 }

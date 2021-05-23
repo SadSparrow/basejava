@@ -55,7 +55,7 @@ public abstract class AbstractStorageTest {
         Resume r = new Resume(UUID_1, "new C");
         r.setContacts(ContactType.PHONE, "+7(999)9992211");
         r.setContacts(ContactType.SKYPE, "new skype");
-        r.setContacts(ContactType.MAIl, "mail@mail.ru");
+        r.setContacts(ContactType.MAIL, "mail@mail.ru");
         storage.update(r);
         Assert.assertEquals(r, storage.get(UUID_1));
     }

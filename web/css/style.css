@@ -5,6 +5,11 @@ header {
     padding: 5px 20px;
 }
 
+h3 {
+    font-size: 1.17em;
+    margin: 0 0;
+}
+
 footer {
     background: none repeat scroll 0 0 #A6C9E2;
     color: #2E6E9E;
