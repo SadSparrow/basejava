@@ -43,8 +43,8 @@
                                 <td><c:out value="${period}"/></td></tr>
                                 <c:forEach var="period" items="${orgList.getPeriod()}">
                                     <tr><td>
-                                        <c:out value="${period.getStartDate().getMonthValue()}"/>/<c:out value="${period.getStartDate().getYear()}"/> - 
-                                        <c:out value="${period.getEndDate().getMonthValue()}"/>/<c:out value="${period.getEndDate().getYear()}"/>
+                                    <c:out value="${period.getStartDate().getMonthValue()}"/>/<c:out value="${period.getStartDate().getYear()}"/> -
+                                    <c:out value="${period.getEndDate().getMonthValue()}"/>/<c:out value="${period.getEndDate().getYear()}"/>
                                     </td></tr>
                                     <tr><td><b><c:out value="${period.getTitle()}"/></b></td></tr>
                                     <tr><td><c:out value="${period.getDescription()}"/></td></tr>
