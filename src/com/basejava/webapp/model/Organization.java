@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -137,6 +138,12 @@ public class Organization implements Serializable {
 
         public String getDescription() {
             return description;
+        }
+
+        public String dateForHtml() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+            return getStartDate().format(formatter) + " - " +
+                    ((getEndDate().equals(DateUtil.NOW)) ? "Сейчас" : getEndDate().format(formatter));
         }
 
         @Override
