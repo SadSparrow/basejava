@@ -30,7 +30,13 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume r = sqlStorage.get(uuid);
+        String submit = request.getParameter("submit");
+        Resume r;
+        if (!uuid.equals("newResume")) {
+            r = sqlStorage.get(uuid);
+        } else {
+            r = new Resume("newResume", "");
+        }
         r.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
@@ -73,6 +79,11 @@ public class ResumeServlet extends HttpServlet {
                     }
                 }
             }
+        }
+        if (submit != null && submit.equals("submit") && r.getUuid().equals("newResume")) {
+            r.setUuid(UUID.randomUUID().toString());
+            sqlStorage.save(r);
+        } else {
             sqlStorage.update(r);
         }
         response.sendRedirect("resume");
@@ -128,10 +139,7 @@ public class ResumeServlet extends HttpServlet {
                 sqlStorage.update(r);
             }
             case "view", "edit" -> r = sqlStorage.get(uuid);
-            case "new" -> {
-                r = new Resume(UUID.randomUUID().toString(), "");
-                sqlStorage.save(r);
-            }
+            case "new" -> r = new Resume("newResume", "");
             default -> throw new IllegalArgumentException("Action " + action + " is illegal");
         }
         request.setAttribute("resume", r);
