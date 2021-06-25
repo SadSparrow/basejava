@@ -17,6 +17,7 @@ import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
+    public static final Organization EMPTY = new Organization("", "", Period.EMPTY);
     private Link homePage;
     private List<Period> period = new ArrayList<>();
 
@@ -93,6 +94,7 @@ public class Organization implements Serializable {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Period implements Serializable {
+        public static final Period EMPTY = new Period();
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate startDate;
         @XmlJavaTypeAdapter(LocalDateAdapter.class)

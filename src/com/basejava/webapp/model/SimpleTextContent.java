@@ -7,6 +7,7 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleTextContent extends AbstractContent {
     private String simpleText;
+    public static final SimpleTextContent EMPTY = new SimpleTextContent("");
 
     public SimpleTextContent() {
     }

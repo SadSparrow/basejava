@@ -2,14 +2,20 @@ package com.basejava.webapp.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StringListContent extends AbstractContent {
     private List<String> stringList;
+    public static final StringListContent EMPTY = new StringListContent("");
 
     public StringListContent() {
+    }
+
+    public StringListContent(String... items) {
+        this(Arrays.asList(items));
     }
 
     public StringListContent(List<String> stringList) {

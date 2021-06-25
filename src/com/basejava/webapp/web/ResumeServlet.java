@@ -3,6 +3,7 @@ package com.basejava.webapp.web;
 import com.basejava.webapp.Config;
 import com.basejava.webapp.model.*;
 import com.basejava.webapp.storage.SqlStorage;
+import com.basejava.webapp.util.HtmlUtil;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -12,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +40,7 @@ public class ResumeServlet extends HttpServlet {
         r.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
+            if (HtmlUtil.isEmpty(value)) {
                 r.setContacts(type, value);
             } else {
                 r.getContacts().remove(type);
@@ -48,34 +48,39 @@ public class ResumeServlet extends HttpServlet {
         }
 
         for (SectionType type : SectionType.values()) {
-            System.out.println(type);
-            String[] strings = request.getParameterValues(type.name());
+            String value = request.getParameter(type.name());
+            String[] values = request.getParameterValues(type.name());
 
-            if (strings != null) {
+            if (HtmlUtil.isEmpty(value) && HtmlUtil.isEmpty(values)) {
+                r.getContents().remove(type);
+            } else {
                 switch (type) {
-                    case OBJECTIVE, PERSONAL -> r.setContent(type, new SimpleTextContent(request.getParameter(type.name())));
-                    case ACHIEVEMENT, QUALIFICATIONS -> r.setContent(type, new StringListContent(Arrays.asList(strings)));
+                    case OBJECTIVE, PERSONAL -> r.setContent(type, new SimpleTextContent(value));
+                    case ACHIEVEMENT, QUALIFICATIONS -> r.setContent(type, new StringListContent(value.split("\\n")));
                     case EXPERIENCE, EDUCATION -> {
-                        String[] orgs = request.getParameterValues(type.name());
-                        String[] url = request.getParameterValues(type.name() + "url");
-                        List<Organization> orgsList = new ArrayList<>();
-                        for (int i = 0; i < orgs.length; i++) {
-                            List<Organization.Period> period = new ArrayList<>();
-                            Organization org = new Organization(new Link(orgs[i], url[i]), period);
-                            orgsList.add(org);
-                            String[] title = request.getParameterValues(i + type.name() + "title");
-                            String[] description = request.getParameterValues(i + type.name() + "description");
-                            String[] startMonth = request.getParameterValues(i + type.name() + "StartDateMonth");
-                            String[] startYear = request.getParameterValues(i + type.name() + "StartDateYear");
-                            String[] endMonth = request.getParameterValues(i + type.name() + "EndDateMonth");
-                            String[] endYear = request.getParameterValues(i + type.name() + "EndDateYear");
-                            if (title != null) {
-                                for (int j = 0; j < title.length; j++) {
-                                    period.add(new Organization.Period(Integer.parseInt(startYear[j]), Month.of(Integer.parseInt(startMonth[j])), Integer.parseInt(endYear[j]), Month.of(Integer.parseInt(endMonth[j])), title[j], description[j]));
+                        List<Organization> orgs = new ArrayList<>();
+                        String[] urls = request.getParameterValues(type.name() + "url");
+                        for (int i = 0; i < values.length; i++) {
+                            String name = values[i];
+                            if (HtmlUtil.isEmpty(name)) {
+                                List<Organization.Period> periods = new ArrayList<>();
+                                String pfx = type.name() + i;
+                                String[] startMonth = request.getParameterValues(i + type.name() + "StartDateMonth");
+                                String[] startYear = request.getParameterValues(i + type.name() + "StartDateYear");
+                                String[] endMonth = request.getParameterValues(i + type.name() + "EndDateMonth");
+                                String[] endYear = request.getParameterValues(i + type.name() + "EndDateYear");
+                                String[] titles = request.getParameterValues(pfx + "title");
+                                String[] descriptions = request.getParameterValues(pfx + "description");
+                                for (int j = 0; j < titles.length; j++) {
+                                    if (HtmlUtil.isEmpty(titles[j])) {
+                                        periods.add(new Organization.Period(Integer.parseInt(startYear[j]), Month.of(Integer.parseInt(startMonth[j])),
+                                                Integer.parseInt(endYear[j]), Month.of(Integer.parseInt(endMonth[j])), titles[j], descriptions[j]));
+                                    }
                                 }
+                                orgs.add(new Organization(new Link(name, urls[i]), periods));
                             }
-                            r.setContent(type, new OrganizationContent(orgsList));
                         }
+                        r.setContent(type, new OrganizationContent(orgs));
                     }
                 }
             }
@@ -105,40 +110,44 @@ public class ResumeServlet extends HttpServlet {
                 response.sendRedirect("resume");
                 return;
             }
-            case "delete_line" -> {
-                int count = Integer.parseInt(request.getParameter("count"));
-                SectionType type = SectionType.valueOf(request.getParameter("type"));
+            case "view" -> r = sqlStorage.get(uuid);
+            case "edit" -> {
                 r = sqlStorage.get(uuid);
-                ((StringListContent) r.getContent(type)).getStringList().remove(count);
-                sqlStorage.update(r);
+                for (SectionType type : SectionType.values()) {
+                    AbstractContent content = r.getContent(type);
+                    switch (type) {
+                        case OBJECTIVE:
+                        case PERSONAL:
+                            if (content == null) {
+                                content = SimpleTextContent.EMPTY;
+                            }
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            if (content == null) {
+                                content = StringListContent.EMPTY;
+                            }
+                            break;
+                        case EXPERIENCE:
+                        case EDUCATION: {
+                            OrganizationContent orgSection = (OrganizationContent) content;
+                            List<Organization> emptyFirstOrganizations = new ArrayList<>();
+                            emptyFirstOrganizations.add(Organization.EMPTY);
+                            if (orgSection != null) {
+                                for (Organization org : orgSection.getOrganizations()) {
+                                    List<Organization.Period> emptyFirstPeriods = new ArrayList<>();
+                                    emptyFirstPeriods.add(Organization.Period.EMPTY);
+                                    emptyFirstPeriods.addAll(org.getPeriod());
+                                    emptyFirstOrganizations.add(new Organization(org.getHomePage(), emptyFirstPeriods));
+                                }
+                            }
+                            content = new OrganizationContent(emptyFirstOrganizations);
+                        }
+                        break;
+                    }
+                    r.setContent(type, content);
+                }
             }
-            case "add_line" -> {
-                r = sqlStorage.get(uuid);
-                SectionType type = SectionType.valueOf(request.getParameter("type"));
-                ((StringListContent) r.getContent(type)).getStringList().add("");
-                sqlStorage.update(r);
-            }
-            case "add_section" -> {
-                r = sqlStorage.get(uuid);
-                SectionType type = SectionType.valueOf(request.getParameter("type"));
-                addSection(type, r);
-                sqlStorage.update(r);
-            }
-            case "add_org" -> {
-                r = sqlStorage.get(uuid);
-                SectionType type = SectionType.valueOf(request.getParameter("type"));
-                ((OrganizationContent) r.getContent(type)).getOrganizations().add(new Organization(new Link("write name", ""), new ArrayList<>()));
-                sqlStorage.update(r);
-            }
-            case "add_period" -> {
-                r = sqlStorage.get(uuid);
-                int count = Integer.parseInt(request.getParameter("count"));
-                SectionType type = SectionType.valueOf(request.getParameter("type"));
-                Organization org = ((OrganizationContent) r.getContent(type)).getOrganizations().get(count);
-                org.addPeriod(1111, Month.of(1), 1111, Month.of(1), "write title", "");
-                sqlStorage.update(r);
-            }
-            case "view", "edit" -> r = sqlStorage.get(uuid);
             case "new" -> r = new Resume("newResume", "");
             default -> throw new IllegalArgumentException("Action " + action + " is illegal");
         }
@@ -146,13 +155,5 @@ public class ResumeServlet extends HttpServlet {
         request.getRequestDispatcher(
                 (action.equals("view") ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
         ).forward(request, response);
-    }
-
-    private static void addSection(SectionType type, Resume r) {
-        switch (type) {
-            case OBJECTIVE, PERSONAL -> r.setContent(type, new SimpleTextContent(""));
-            case ACHIEVEMENT, QUALIFICATIONS -> r.setContent(type, new StringListContent(new ArrayList<>()));
-            case EXPERIENCE, EDUCATION -> r.setContent(type, new OrganizationContent(new ArrayList<>()));
-        }
     }
 }

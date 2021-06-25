@@ -35,7 +35,6 @@
         <c:forEach var="type" items="<%=SectionType.values()%>">
         <c:if test="${resume.getContent(type) == null}">
             <p><h3><c:out value="${type.getTitle()}"/></h3></p>
-            <p>Add Section<a href="resume?uuid=${resume.uuid}&action=add_section&type=${type}"><img src="img/add.png"></a></p>
         </c:if>
         <c:if test="${resume.getContent(type) != null}">
         <c:set var="content" value="${resume.getContent(type)}"/>
@@ -48,32 +47,22 @@
                         <dd><input type="text" name="${type}" size=80 value="${fn:replace(strings, '\"', '&quot;')}"></dd>
                     </c:when>
                     <c:when test="${type=='QUALIFICATIONS' || type=='ACHIEVEMENT'}">
-                        <c:forEach var="list" items="<%=((StringListContent) content).getStringList()%>" varStatus="count">
-                        <c:set var="strings" value="${list}"/>
-                            <dd>
-                                <input type="text" name="${type}" size=100 value="${fn:replace(strings, '\"', '&quot;')}">
-                                <a href="resume?uuid=${resume.uuid}&action=delete_line&count=${count.index}&type=${type}"><img src="img/delete.png"></a>
-                            </dd>
-                        </c:forEach>
-                        <p>Add line
-                            <a href="resume?uuid=${resume.uuid}&action=add_line&type=${type}"><img src="img/add.png"></a></p>
+                        <textarea name='${type}' cols=85 rows=5><%=String.join("\n", ((StringListContent) content).getStringList())%></textarea>
                     </c:when>
                     <c:when test="${type=='EXPERIENCE' || type=='EDUCATION'}">
-                    <p><a href="resume?uuid=${resume.uuid}&action=add_org&type=${type}"><img src="img/add.png"></a></p>
                         <c:forEach var="orgList" items="<%=((OrganizationContent) content).getOrganizations()%>" varStatus="count">
-                            <b><input type="text" name="${type}" required size=100 value="${orgList.getHomePage().getName()}">
-                                <a href="resume?uuid=${resume.uuid}&action=add_period&count=${count.index}&type=${type}"><img src="img/add.png"></a>
+                            <b><input type="text" name="${type}" size=100 value="${orgList.getHomePage().getName()}">
                             </b><br>
                             <input type="text" name="${type}url" size=100 value="${orgList.getHomePage().getUrl()}">
                                 <c:forEach var="period" items="${orgList.getPeriod()}">
                                     <p>
-                        Start date: <input type="text" name="${count.index}${type}StartDateMonth" required size=10 value="${period.getStartDate().getMonthValue()}">
-                                   /<input type="text" name="${count.index}${type}StartDateYear" required size=10 value="${period.getStartDate().getYear()}">
-                        End date: <input type="text" name="${count.index}${type}EndDateMonth" required size=10 value="${period.getEndDate().getMonthValue()}">
-                                   /<input type="text" name="${count.index}${type}EndDateYear" required size=10 value="${period.getEndDate().getYear()}">
+                        Start date: <input type="text" name="${count.index}${type}StartDateMonth"  size=10 value="${period.getStartDate().getMonthValue()}">
+                                   /<input type="text" name="${count.index}${type}StartDateYear" size=10 value="${period.getStartDate().getYear()}">
+                        End date: <input type="text" name="${count.index}${type}EndDateMonth" size=10 value="${period.getEndDate().getMonthValue()}">
+                                   /<input type="text" name="${count.index}${type}EndDateYear" size=10 value="${period.getEndDate().getYear()}">
                                     </p>
                                     <c:set var="title" value="${period.getTitle()}"/>
-                                    <p><input type="text" name="${count.index}${type}title" required size=100 value="${fn:replace(title, '\"', '&quot;')}"></p>
+                                    <p><input type="text" name="${count.index}${type}title" size=100 value="${fn:replace(title, '\"', '&quot;')}"></p>
                                     <c:set var="description" value="${period.getDescription()}"/>
                                     <p><input type="text" name="${count.index}${type}description" size=100 value="${fn:replace(description, '\"', '&quot;')}"></p>
                                 </c:forEach>
