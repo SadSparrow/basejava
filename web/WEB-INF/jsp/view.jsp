@@ -1,3 +1,4 @@
+<%@ page import="com.basejava.webapp.util.HtmlUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -15,7 +16,8 @@
         <c:forEach var="contactEntry" items="${resume.contacts}">
             <jsp:useBean id="contactEntry"
                          type="java.util.Map.Entry<com.basejava.webapp.model.ContactType, java.lang.String>"/>
-                <%=contactEntry.getKey().toHtml(contactEntry.getValue())%><br/>
+                <c:if test="${contactEntry.getValue() != ''}"><%=contactEntry.getKey().toHtml(contactEntry.getValue())%><br/></c:if>
+                <c:if test="${contactEntry.getValue() == ''}"></c:if>
         </c:forEach>
     <p>
     <table cellpadding="2">
@@ -46,7 +48,7 @@
                                 <td><c:out value="${period}"/></td></tr>
                                 <c:forEach var="period" items="${orgList.getPeriod()}">
                                     <tr><td>
-                                        <c:out value="${period.dateForHtml()}"/>
+                                        <c:out value="${HtmlUtil.formatDates(period)}"/>
                                     </td></tr>
                                     <tr><td><b><c:out value="${period.getTitle()}"/></b></td></tr>
                                     <tr><td><c:out value="${period.getDescription()}"/></td></tr>

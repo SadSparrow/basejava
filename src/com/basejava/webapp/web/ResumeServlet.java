@@ -3,6 +3,7 @@ package com.basejava.webapp.web;
 import com.basejava.webapp.Config;
 import com.basejava.webapp.model.*;
 import com.basejava.webapp.storage.SqlStorage;
+import com.basejava.webapp.util.DateUtil;
 import com.basejava.webapp.util.HtmlUtil;
 
 import javax.servlet.ServletConfig;
@@ -11,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +40,7 @@ public class ResumeServlet extends HttpServlet {
         r.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
-            if (HtmlUtil.isEmpty(value)) {
+            if (!HtmlUtil.isEmpty(value)) {
                 r.setContacts(type, value);
             } else {
                 r.getContacts().remove(type);
@@ -51,7 +51,7 @@ public class ResumeServlet extends HttpServlet {
             String value = request.getParameter(type.name());
             String[] values = request.getParameterValues(type.name());
 
-            if (HtmlUtil.isEmpty(value) && HtmlUtil.isEmpty(values)) {
+            if (HtmlUtil.isEmpty(value) && HtmlUtil.isEmptyArray(values)) {
                 r.getContents().remove(type);
             } else {
                 switch (type) {
@@ -62,19 +62,16 @@ public class ResumeServlet extends HttpServlet {
                         String[] urls = request.getParameterValues(type.name() + "url");
                         for (int i = 0; i < values.length; i++) {
                             String name = values[i];
-                            if (HtmlUtil.isEmpty(name)) {
+                            if (!HtmlUtil.isEmpty(name)) {
                                 List<Organization.Period> periods = new ArrayList<>();
-                                String pfx = type.name() + i;
-                                String[] startMonth = request.getParameterValues(i + type.name() + "StartDateMonth");
-                                String[] startYear = request.getParameterValues(i + type.name() + "StartDateYear");
-                                String[] endMonth = request.getParameterValues(i + type.name() + "EndDateMonth");
-                                String[] endYear = request.getParameterValues(i + type.name() + "EndDateYear");
+                                String pfx = i + type.name();
+                                String[] startDates = request.getParameterValues(pfx + "startDate");
+                                String[] endDates = request.getParameterValues(pfx + "endDate");
                                 String[] titles = request.getParameterValues(pfx + "title");
                                 String[] descriptions = request.getParameterValues(pfx + "description");
                                 for (int j = 0; j < titles.length; j++) {
-                                    if (HtmlUtil.isEmpty(titles[j])) {
-                                        periods.add(new Organization.Period(Integer.parseInt(startYear[j]), Month.of(Integer.parseInt(startMonth[j])),
-                                                Integer.parseInt(endYear[j]), Month.of(Integer.parseInt(endMonth[j])), titles[j], descriptions[j]));
+                                    if (!HtmlUtil.isEmpty(titles[j])) {
+                                        periods.add(new Organization.Period(DateUtil.parse(startDates[j]), DateUtil.parse(endDates[j]), titles[j], descriptions[j]));
                                     }
                                 }
                                 orgs.add(new Organization(new Link(name, urls[i]), periods));

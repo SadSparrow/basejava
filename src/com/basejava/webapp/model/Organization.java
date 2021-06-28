@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
-    public static final Organization EMPTY = new Organization("", "", Period.EMPTY);
+    public static final Organization EMPTY = new Organization(" ", "", Period.EMPTY);
     private Link homePage;
     private List<Period> period = new ArrayList<>();
 
@@ -140,12 +139,6 @@ public class Organization implements Serializable {
 
         public String getDescription() {
             return description;
-        }
-
-        public String dateForHtml() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
-            return getStartDate().format(formatter) + " - " +
-                    ((getEndDate().equals(DateUtil.NOW)) ? "Сейчас" : getEndDate().format(formatter));
         }
 
         @Override

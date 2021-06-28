@@ -5,6 +5,7 @@
 <%@ page import="com.basejava.webapp.model.OrganizationContent" %>
 <%@ page import="com.basejava.webapp.model.Organization" %>
 <%@ page import="com.basejava.webapp.model.Organization.Period" %>
+<%@ page import="com.basejava.webapp.util.DateUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -55,11 +56,14 @@
                             </b><br>
                             <input type="text" name="${type}url" size=100 value="${orgList.getHomePage().getUrl()}">
                                 <c:forEach var="period" items="${orgList.getPeriod()}">
+                                <jsp:useBean id="period" type="com.basejava.webapp.model.Organization.Period"/>
                                     <p>
-                        Start date: <input type="text" name="${count.index}${type}StartDateMonth"  size=10 value="${period.getStartDate().getMonthValue()}">
-                                   /<input type="text" name="${count.index}${type}StartDateYear" size=10 value="${period.getStartDate().getYear()}">
-                        End date: <input type="text" name="${count.index}${type}EndDateMonth" size=10 value="${period.getEndDate().getMonthValue()}">
-                                   /<input type="text" name="${count.index}${type}EndDateYear" size=10 value="${period.getEndDate().getYear()}">
+                        Start date:
+                                   <input type="text" name="${count.index}${type}startDate" size=10
+                                                                                  value="<%=DateUtil.format(period.getStartDate())%>" placeholder="MM/yyyy">
+                        End date:
+                                    <input type="text" name="${count.index}${type}endDate" size=10
+                                                                                   value="<%=DateUtil.format(period.getEndDate())%>" placeholder="MM/yyyy">
                                     </p>
                                     <c:set var="title" value="${period.getTitle()}"/>
                                     <p><input type="text" name="${count.index}${type}title" size=100 value="${fn:replace(title, '\"', '&quot;')}"></p>
